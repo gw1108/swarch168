@@ -20,7 +20,7 @@ const int CNetworkController::MAX_QUEUE = 1;
 // successful, it will start the listening thread and set m_connected to true. If the connection
 // fails, it will not start the thread and will set m_connected to false.
 //  ===============================================================================================
-CNetworkController::CNetworkController(void) 
+CNetworkController::CNetworkController(std::string ipAddress, int portNumber) 
 {
 }
 
