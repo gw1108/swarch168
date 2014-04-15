@@ -49,7 +49,7 @@ public:
 	static const int MAX_QUEUE; 
 
 	// Constructor/Destructor
-	CNetworkController(void);
+	CNetworkController(std::string ipAddress, int portNumber);
 	~CNetworkController(void);
 
 	// Method Prototypes
