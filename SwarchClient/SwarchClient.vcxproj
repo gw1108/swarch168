@@ -77,11 +77,13 @@
   <ItemGroup>
     <ClInclude Include="ClientEngine.h" />
     <ClInclude Include="CNetworkController.h" />
+    <ClInclude Include="IpGetter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ClientEngine.cpp" />
     <ClCompile Include="ClientStart.cpp" />
     <ClCompile Include="CNetworkController.cpp" />
+    <ClCompile Include="IpGetter.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

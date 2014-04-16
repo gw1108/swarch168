@@ -87,7 +87,14 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="EmptySource.cpp" />
+    <ClCompile Include="GameData.cpp" />
+    <ClCompile Include="GamePiece.cpp" />
+    <ClCompile Include="Pellet.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GameData.h" />
+    <ClInclude Include="GamePiece.h" />
+    <ClInclude Include="Pellet.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
