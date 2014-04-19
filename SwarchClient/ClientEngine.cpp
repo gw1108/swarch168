@@ -18,7 +18,7 @@
 // Input: none
 // Output: none
 //  ===============================================================================================
-ClientEngine::ClientEngine(int assignedPlayer) :
+ClientEngine::ClientEngine(int assignedPlayer, std::string userName) :
 	m_engineClock(),
 	m_running(false),
 	m_gameData(),
@@ -60,10 +60,13 @@ ClientEngine::ClientEngine(int assignedPlayer) :
 	m_gameFont = new sf::Font();
 
 	if(!m_gameFont->loadFromFile("arial.ttf"))
-	{
+	{ 
 		std::cout << "Font Error\n";
 		m_mainWindow->close();
 	}
+
+	//set the username display
+	m_userName = sf::Text(userName, *m_gameFont, 30);
 }
 
 // ===== Destructor ===============================================================================
@@ -71,8 +74,8 @@ ClientEngine::ClientEngine(int assignedPlayer) :
 // ================================================================================================
 ClientEngine::~ClientEngine(void)
 {
-	delete m_assignedPiece;
-	delete m_pellets;
+	//delete m_assignedPiece;	//m_assignedPiece never points to a game piece on the heap. cannot be deleted.
+	delete[] m_pellets;
 	delete m_mainWindow;
 	delete m_gameFont;
 }
@@ -124,6 +127,7 @@ void ClientEngine::Run(void)
 				if(event.type == sf::Event::Closed)
 				{
 					m_mainWindow->close();
+					m_running = false;
 				}
 				else if((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::W))
 				{
@@ -264,6 +268,9 @@ void ClientEngine::Render(void)
 
 	// Draw Pieces
 	m_mainWindow->draw(*m_assignedPiece);
+
+	// Draw Player User Name
+	m_mainWindow->draw(m_userName);
 
 	// Display Screen
 	m_mainWindow->display();
