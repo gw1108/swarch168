@@ -28,7 +28,7 @@ public:
 	// ============================================================================================
 
 	// Constructor/Destructor Prototypes
-	ClientEngine(int assignedPlayer);
+	ClientEngine(int assignedPlayer, std::string userName);
 	~ClientEngine(void);
 
 	// Prototypes
@@ -58,6 +58,9 @@ private:
 	// Engine Related Members
 	sf::Clock m_engineClock;
 	bool m_running;
+	
+	// User Data
+	sf::Text m_userName;
 
 	// Most Recent Data
 	GameData m_gameData;

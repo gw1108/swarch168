@@ -74,6 +74,9 @@
       <Project>{9a62768d-6691-41c2-9481-08ed849a013d}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\Jay%27s Realm\GameDev\swarch168\SwarchServer\ServerStart.cpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
