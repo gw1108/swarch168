@@ -2,7 +2,7 @@
 // Filename: "ClientEngine.h"
 // ================================================================================================
 // Author(s): Travis Smith
-// Last Modified: April 16, 2014
+// Last Modified: May 4, 2014
 // ================================================================================================
 // Class Description:
 // 
@@ -28,7 +28,7 @@ public:
 	// ============================================================================================
 
 	// Constructor/Destructor Prototypes
-	ClientEngine(int assignedPlayer, std::string userName);
+	ClientEngine(sf::RenderWindow& mainWindow, const sf::Font& gameFont, int assignedPlayer, std::string userName);
 	~ClientEngine(void);
 
 	// Prototypes
@@ -77,8 +77,8 @@ private:
 	Pellet *m_pellets;
 
 	// Window Members
-	sf::RenderWindow *m_mainWindow;
-	sf::Font *m_gameFont;
+	sf::RenderWindow &m_mainWindow;
+	const sf::Font &m_gameFont;
 };
 
 #endif

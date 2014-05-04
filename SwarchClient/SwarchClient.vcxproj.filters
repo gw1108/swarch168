@@ -21,7 +21,10 @@
     <ClInclude Include="CNetworkController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IpGetter.h">
+    <ClInclude Include="MenuSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TextBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -35,7 +38,10 @@
     <ClCompile Include="CNetworkController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IpGetter.cpp">
+    <ClCompile Include="MenuSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TextBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

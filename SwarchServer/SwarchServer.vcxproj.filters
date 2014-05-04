@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\Jay%27s Realm\GameDev\swarch168\SwarchServer\ServerStart.cpp">
+    <ClCompile Include="ServerStart.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
