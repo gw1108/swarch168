@@ -74,7 +74,6 @@ ClientEngine::ClientEngine(int assignedPlayer, std::string userName) :
 // ================================================================================================
 ClientEngine::~ClientEngine(void)
 {
-	//delete m_assignedPiece;	//m_assignedPiece never points to a game piece on the heap. cannot be deleted.
 	delete[] m_pellets;
 	delete m_mainWindow;
 	delete m_gameFont;
@@ -244,8 +243,6 @@ void ClientEngine::CheckWallCollisions()
 	{
 		m_assignedPiece->ReSpawn();
 	}
-
-
 }
 
 // ===== Render ===================================================================================
