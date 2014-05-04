@@ -2,7 +2,7 @@
 // Filename: "ClientEngine.cpp"
 // ================================================================================================
 // Author(s): Travis Smith
-// Last Modified: April 16, 2014
+// Last Modified: May 4, 2014
 // ================================================================================================
 // This is the implementation file for the ClientEngine class. For class description see the header
 // file "ClientEngine.h"
@@ -18,7 +18,9 @@
 // Input: none
 // Output: none
 //  ===============================================================================================
-ClientEngine::ClientEngine(int assignedPlayer, std::string userName) :
+ClientEngine::ClientEngine(sf::RenderWindow& mainWindow, const sf::Font& gameFont, int assignedPlayer, std::string userName) :
+	m_mainWindow(mainWindow),
+	m_gameFont(gameFont),
 	m_engineClock(),
 	m_running(false),
 	m_gameData(),
@@ -28,9 +30,7 @@ ClientEngine::ClientEngine(int assignedPlayer, std::string userName) :
 	m_player1(1),
 	m_player2(2),
 	m_player3(3),
-	m_pellets(NULL),
-	m_mainWindow(NULL),
-	m_gameFont(NULL)
+	m_pellets(NULL)
 {
 	// Point assigned piece to correct player piece
 	if(m_assignedPlayer == 1)
@@ -55,18 +55,8 @@ ClientEngine::ClientEngine(int assignedPlayer, std::string userName) :
 	// Initialize Pellet Array
 	m_pellets = new Pellet[GameData::MAX_PELLETS];
 
-	// Initialize Window and Font
-	m_mainWindow = new sf::RenderWindow(sf::VideoMode(GameData::BOARD_WIDTH, GameData::BOARD_HEIGHT), "Swarch Client", sf::Style::Close | sf::Style::Titlebar);
-	m_gameFont = new sf::Font();
-
-	if(!m_gameFont->loadFromFile("arial.ttf"))
-	{ 
-		std::cout << "Font Error\n";
-		m_mainWindow->close();
-	}
-
 	//set the username display
-	m_userName = sf::Text(userName, *m_gameFont, 30);
+	m_userName = sf::Text(userName, m_gameFont, 30);
 }
 
 // ===== Destructor ===============================================================================
@@ -75,8 +65,6 @@ ClientEngine::ClientEngine(int assignedPlayer, std::string userName) :
 ClientEngine::~ClientEngine(void)
 {
 	delete[] m_pellets;
-	delete m_mainWindow;
-	delete m_gameFont;
 }
 
 // ===== Run ======================================================================================
@@ -121,11 +109,10 @@ void ClientEngine::Run(void)
 
 			// Loop through events and assign proper values to moveDirection
 			sf::Event event;
-			while(m_mainWindow->pollEvent(event))
+			while(m_mainWindow.pollEvent(event))
 			{
-				if(event.type == sf::Event::Closed)
+				if((event.type == sf::Event::Closed) || ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape)))
 				{
-					m_mainWindow->close();
 					m_running = false;
 				}
 				else if((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::W))
@@ -255,20 +242,20 @@ void ClientEngine::CheckWallCollisions()
 void ClientEngine::Render(void)
 {
 	// Clear Screen
-	m_mainWindow->clear(sf::Color(0, 0, 0));
+	m_mainWindow.clear(sf::Color(0, 0, 0));
 
 	// Draw Pellets
 	for(int pIndex = 0; pIndex < GameData::MAX_PELLETS; pIndex++)
 	{
-		m_mainWindow->draw(m_pellets[pIndex]);
+		m_mainWindow.draw(m_pellets[pIndex]);
 	}
 
 	// Draw Pieces
-	m_mainWindow->draw(*m_assignedPiece);
+	m_mainWindow.draw(*m_assignedPiece);
 
 	// Draw Player User Name
-	m_mainWindow->draw(m_userName);
+	m_mainWindow.draw(m_userName);
 
 	// Display Screen
-	m_mainWindow->display();
+	m_mainWindow.display();
 }

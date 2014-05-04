@@ -69,7 +69,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(ProjectDir)..\Middleware\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>sfml-graphics-s.lib;sfml-system-s.lib;sfml-audio-s.lib;sfml-network-s.lib;sfml-window-s.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -80,13 +80,15 @@
   <ItemGroup>
     <ClInclude Include="ClientEngine.h" />
     <ClInclude Include="CNetworkController.h" />
-    <ClInclude Include="IpGetter.h" />
+    <ClInclude Include="MenuSystem.h" />
+    <ClInclude Include="TextBox.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ClientEngine.cpp" />
     <ClCompile Include="ClientStart.cpp" />
     <ClCompile Include="CNetworkController.cpp" />
-    <ClCompile Include="IpGetter.cpp" />
+    <ClCompile Include="MenuSystem.cpp" />
+    <ClCompile Include="TextBox.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
