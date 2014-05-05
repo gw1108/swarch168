@@ -43,6 +43,7 @@ public:
 	// ============================================================================================
 
 	// Static Constants
+	static const int SERVER_PORT; 
 	static const int ENGINE_SPEED;		// The Loop Conditional to control the engine cycle rate of clients and server
 	static const int BOARD_HEIGHT;		// Height of the playable area
 	static const int BOARD_WIDTH;		// Width of the playable area

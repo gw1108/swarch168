@@ -253,7 +253,7 @@ void MenuSystem::AttemptConnection(void)
 	Render();
 
 	// Attempt Connection
-	if(m_nwcRef.Connect(ipString, CNetworkController::SERVER_PORT))
+	if(m_nwcRef.Connect(ipString, GameData::SERVER_PORT))
 	{
 		m_msgField.setString("Connected to server, sending login data.");
 
