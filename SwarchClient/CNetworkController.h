@@ -54,14 +54,18 @@ public:
 
 	// Method Prototypes
 	bool Connect(std::string ipAddress, int portNumber);
+	void Disconnect(void);
 	void StopListeningThread(void);
 	GameData GetNextData(void);
+	void SendLogIn(std::string name, std::string pw);
 	void SendDirectionChange(GamePiece::Direction direction);
 
 	// Inlined Methods
 	bool IsConnected(){ return m_connected; }
 	int GetPlayerNumber(void){ return m_playerNum; }
 	bool ShouldStartGame(void){ return m_startGame; }
+	bool ServerResponded(void) { return m_responded; }
+	int GetServerResponse(void) { return m_serverResponse; }
 
 private:
 
@@ -82,6 +86,10 @@ private:
 	int m_playerNum;
 	const sf::Clock  &m_gameClock;
 	bool m_startGame;
+
+	// Login Data
+	bool m_responded;
+	int m_serverResponse;
 
 	// ============================================================================================
 	// Methods

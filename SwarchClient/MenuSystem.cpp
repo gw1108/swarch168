@@ -9,6 +9,7 @@
 // ================================================================================================
 
 #include "MenuSystem.h"
+#include "md5.h"
 
 // Initialize Static Constants
 const int MenuSystem::FONT_SIZE = 18;
@@ -190,6 +191,9 @@ void MenuSystem::AttemptConnection(void)
 	std::string userName = m_nameBox.GetDataString();
 	std::string psswrd = m_pwBox.GetDataString();
 
+	// Encrypt PW
+	std::string md5PW = MD5(psswrd).hexdigest();
+
 	if(userName.length() == 0)
 	{
 		m_msgField.setString("Please Enter User Name");
@@ -251,7 +255,52 @@ void MenuSystem::AttemptConnection(void)
 	// Attempt Connection
 	if(m_nwcRef.Connect(ipString, CNetworkController::SERVER_PORT))
 	{
-		m_running = false;
+		m_msgField.setString("Connected to server, sending login data.");
+
+		// Send Log-In Packet
+		m_nwcRef.SendLogIn(userName, md5PW);
+
+		// Wait for Server Response
+		sf::Clock waitClock;
+		float waitTime = 5000; // Wait 5 Seconds for Server Response
+		float startTime = waitClock.getElapsedTime().asMilliseconds();
+
+		while(!m_nwcRef.ServerResponded())
+		{
+			float currentTime = waitClock.getElapsedTime().asMilliseconds();
+
+			if((currentTime - startTime) >= waitTime)
+			{
+				// Server Timeout 
+				m_msgField.setString("Response Timed Out. Try Again.");
+				m_nwcRef.Disconnect();
+				return;
+			}
+		}
+
+		int response = m_nwcRef.GetServerResponse();
+
+		if(response == GameData::NEW_ACCOUNT)
+		{
+			m_msgField.setString("New account created.");
+			m_running = false;
+		}
+		else if(response == GameData::ACCEPTED)
+		{
+			m_msgField.setString("Log in successful.");
+			m_running = false;
+		}
+		else if(response == GameData::WRONG_PW)
+		{
+			m_msgField.setString("Incorrect username or password.");
+			m_nwcRef.Disconnect();
+		}
+		else
+		{
+			m_msgField.setString("Error with server response, try again.");
+			m_nwcRef.Disconnect();
+		}
+
 	}
 	else
 	{

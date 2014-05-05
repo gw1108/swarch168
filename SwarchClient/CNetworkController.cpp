@@ -11,6 +11,7 @@
 #include <SFML\Network\Packet.hpp>
 #include <Windows.h>
 #include "CNetworkController.h"
+#include "LogInData.h"
 
 const int CNetworkController::MAX_QUEUE = 1;
 const int CNetworkController::SERVER_PORT = 88585;
@@ -26,7 +27,9 @@ CNetworkController::CNetworkController(const sf::Clock& gameClock) :
 	m_dataQueue(),
 	m_dataLock(),
 	m_playerNum(-1),
-	m_startGame(false)
+	m_startGame(false),
+	m_responded(false),
+	m_serverResponse(-1)
 {}
 
 // ===== Destructor ===============================================================================
@@ -74,6 +77,21 @@ bool CNetworkController::Connect(std::string ipAddress, int portNumber)
 	}
 }
 
+// ===== Disconnect ===============================================================================
+// Terminates the current connection to the server, if it exsists.
+//
+// Input: none
+// Output: none
+// ================================================================================================
+void CNetworkController::Disconnect(void)
+{
+	StopListeningThread();
+	m_serverConnection.disconnect();
+	m_connected = false;
+	m_responded = false;
+	m_serverResponse = (-1);
+}
+
 // ===== StopListeningThread ======================================================================
 // Method will terminate the socket listening thread.
 //
@@ -86,6 +104,7 @@ void CNetworkController::StopListeningThread(void)
 	{
 		m_connected = false;		// Set Thread-Loop conditional to false
 		m_listeningThread->join();	// Wait for thread to end
+		delete m_listeningThread;
 	}
 }
 
@@ -114,10 +133,13 @@ void CNetworkController::SocketListening(void)
 			if(cmdCode == GameData::INITIALIZE)
 			{
 				// Get assigned player number from packet
+				sf::Uint8 serverResponse;
 				sf::Uint8 playerNum;
 
-				receivedPacket >> playerNum;
+				receivedPacket >> serverResponse >> playerNum;
 
+				m_responded = true;
+				m_serverResponse = serverResponse;
 				m_playerNum = playerNum;
 			}
 			else if(cmdCode == GameData::GAME_UPDATE)
@@ -169,6 +191,28 @@ GameData CNetworkController::GetNextData(void)
 	m_dataLock.unlock();	// Unlock Data
 
 	return data;
+}
+
+// ===== SendLogIn ================================================================================
+// This method will take the clients entered username and password and send them to the server.
+//
+// Input: 
+//	[IN] std::string name	- username
+//	[IN] std::string pw		- encrypted pw
+//
+// Output: none
+// ================================================================================================
+void CNetworkController::SendLogIn(std::string name, std::string pw)
+{
+	sf::Uint8 commandCode = GameData::LOG_IN;
+	sf::Int32 timeStamp = m_gameClock.getElapsedTime().asMilliseconds();
+
+	LogInData data(name, pw);
+
+	sf::Packet dataPacket;
+	dataPacket << commandCode << data << timeStamp;
+
+	SendPacket(dataPacket);
 }
 
 // ===== SendDirectionChange =========================================================================
