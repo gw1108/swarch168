@@ -7,9 +7,11 @@ int main(char* argc, char* argv[])
 {
 	//create server engine
 	ServerEngine serverEngine = ServerEngine();
+
 	while(true)
 	{
 		//server engine wait for people
+		serverEngine.waitForUsers();
 
 		//start server engine
 		serverEngine.run();
