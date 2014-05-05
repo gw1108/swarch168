@@ -11,6 +11,7 @@ public:
 
 	int open(char* filename);
 	std::vector<std::vector<std::string>> query(char* query);
+	std::vector<std::vector<std::string>> query(std::string query);
 
 	void close();
 	bool hasTable(std::string tableName);

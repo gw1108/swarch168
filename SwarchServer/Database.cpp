@@ -18,6 +18,10 @@ int Database::open(char* filename)
 	return sqlite3_open(filename, &db);
 }
 
+//returns a vector<vector<string>> with each vector<string> being a row
+//ie SELECT a, b from table_name
+//returns vector<string> row
+//a value : row.at(0) | b value : row.at(1)
 std::vector<std::vector<std::string>> Database::query(char* query)
 {
 	sqlite3_stmt* statement;
@@ -57,6 +61,11 @@ std::vector<std::vector<std::string>> Database::query(char* query)
 		cout << query << " " << error << endl;
 
 	return results;
+}
+
+std::vector<std::vector<std::string>> Database::query(string query)
+{
+	return this->query(query.c_str());
 }
 
 void Database::close()

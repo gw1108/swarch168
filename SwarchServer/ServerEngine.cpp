@@ -6,16 +6,15 @@ const unsigned short ServerEngine::DEFAULT_PORT = 53000;
 
 ServerEngine::ServerEngine(void)
 {
-	db = new Database("Database.sqlite");
 	currentPort = DEFAULT_PORT;
 	listener.setBlocking(false);
 	selector.add(listener);
+	logInHandler = new LogIn();
 }
 
 ServerEngine::~ServerEngine(void)
 {
-	db->close();
-	delete db;
+	delete logInHandler;
 	for(sf::TcpSocket* socket : clients)
 	{
 		delete socket;
@@ -73,8 +72,9 @@ void ServerEngine::waitForUsers(void)
 						sf::Packet packet;
 						if (client.receive(packet) == sf::Socket::Done)
 						{
-							//if packet is login mark the client as ready
-							//ignore if the client is already logged in
+							//if packet is login check login
+							//if(logInHandler.login(username, password))
+							//then mark the client as ready
 						}
 					}
 				}

@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Express 2012 for Windows Desktop
+# Visual Studio 2012
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SwarchClient", "SwarchClient\SwarchClient.vcxproj", "{6B39ADD2-91A1-4200-A061-0A11C3BFAF29}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SwarchServer", "SwarchServer\SwarchServer.vcxproj", "{910779FB-42D7-4D54-9C9E-25BFC65E485B}"

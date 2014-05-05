@@ -1,6 +1,7 @@
 #pragma once
 #include "Database.h"
 #include "SFML\Network.hpp"
+#include "LogIn.h"
 
 class ServerEngine
 {
@@ -15,7 +16,7 @@ public:
 private:
 	bool serverIsRunning;
 	unsigned short currentPort;
-	Database* db;
+	LogIn* logInHandler;
 	sf::TcpListener listener;
 	sf::SocketSelector selector;
 	std::vector<sf::TcpSocket*> clients;		//todo make this a POD struct

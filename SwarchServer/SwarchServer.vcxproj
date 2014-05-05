@@ -43,13 +43,13 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\Middleware\include;$(ProjectDir)..\SwarchLibrary;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\Middleware\include;$(ProjectDir)..\SwarchLibrary;$(ProjectDir)..\Middleware\openssl-1.0.1g-bin\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SFML_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\Middleware\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-graphics-s-d.lib;sfml-system-s-d.lib;sfml-audio-s-d.lib;sfml-network-s-d.lib;sfml-window-s-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\Middleware\lib;$(ProjectDir)..\Middleware\openssl-1.0.1g-bin\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sfml-graphics-s-d.lib;sfml-system-s-d.lib;sfml-audio-s-d.lib;sfml-network-s-d.lib;sfml-window-s-d.lib;%(AdditionalDependencies);libeay32.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -58,15 +58,15 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\Middleware\include;$(ProjectDir)..\SwarchLibrary;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\Middleware\include;$(ProjectDir)..\SwarchLibrary;$(ProjectDir)..\Middleware\openssl-1.0.1g-bin\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SFML_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\Middleware\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-graphics-s.lib;sfml-system-s.lib;sfml-audio-s.lib;sfml-network-s.lib;sfml-window-s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\Middleware\lib;$(ProjectDir)..\Middleware\openssl-1.0.1g-bin\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sfml-graphics-s.lib;sfml-system-s.lib;sfml-audio-s.lib;sfml-network-s.lib;sfml-window-s.lib;%(AdditionalDependencies);libeay32.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -76,12 +76,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Jay%27s Realm\GameDev\swarch168\SwarchServer\Database.cpp" />
+    <ClCompile Include="..\..\..\..\Jay%27s Realm\GameDev\swarch168\SwarchServer\LogIn.cpp" />
     <ClCompile Include="..\..\..\..\Jay%27s Realm\GameDev\swarch168\SwarchServer\ServerEngine.cpp" />
     <ClCompile Include="..\..\..\..\Jay%27s Realm\GameDev\swarch168\SwarchServer\ServerStart.cpp" />
     <ClCompile Include="..\..\..\..\Jay%27s Realm\GameDev\swarch168\SwarchServer\sqlite3.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Jay%27s Realm\GameDev\swarch168\SwarchServer\Database.h" />
+    <ClInclude Include="..\..\..\..\Jay%27s Realm\GameDev\swarch168\SwarchServer\LogIn.h" />
     <ClInclude Include="..\..\..\..\Jay%27s Realm\GameDev\swarch168\SwarchServer\ServerEngine.h" />
     <ClInclude Include="..\..\..\..\Jay%27s Realm\GameDev\swarch168\SwarchServer\sqlite3.h" />
     <ClInclude Include="..\..\..\..\Jay%27s Realm\GameDev\swarch168\SwarchServer\sqlite3ext.h" />
