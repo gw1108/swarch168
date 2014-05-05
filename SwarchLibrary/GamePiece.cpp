@@ -71,7 +71,7 @@ void GamePiece::ReSpawn(void)
 	float xCoord = 0;
 	float yCoord = 0;
 
-	xCoord = ((rand() % (GameData::BOARD_WIDTH)));	
+	xCoord = (float)((rand() % (GameData::BOARD_WIDTH)));	
 
 	if(xCoord <= 10)
 	{
@@ -79,10 +79,10 @@ void GamePiece::ReSpawn(void)
 	}
 	else if(xCoord >= (GameData::BOARD_WIDTH - 10))
 	{
-		xCoord = (GameData::BOARD_WIDTH - 10);
+		xCoord = (GameData::BOARD_WIDTH - 10.f);
 	}
 
-	yCoord = ((rand() % (GameData::BOARD_HEIGHT)));	
+	yCoord = (float)((rand() % (GameData::BOARD_HEIGHT)));	
 
 	if(yCoord <= 10)
 	{
@@ -90,7 +90,7 @@ void GamePiece::ReSpawn(void)
 	}
 	else if(yCoord >= (GameData::BOARD_HEIGHT - 10))
 	{
-		yCoord = (GameData::BOARD_HEIGHT - 10);
+		yCoord = (GameData::BOARD_HEIGHT - 10.f);
 	}
 
 	sf::Vector2f position(xCoord, yCoord);

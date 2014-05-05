@@ -80,6 +80,7 @@
   <ItemGroup>
     <ClInclude Include="ClientEngine.h" />
     <ClInclude Include="CNetworkController.h" />
+    <ClInclude Include="md5.h" />
     <ClInclude Include="MenuSystem.h" />
     <ClInclude Include="TextBox.h" />
   </ItemGroup>
@@ -87,6 +88,7 @@
     <ClCompile Include="ClientEngine.cpp" />
     <ClCompile Include="ClientStart.cpp" />
     <ClCompile Include="CNetworkController.cpp" />
+    <ClCompile Include="md5.cpp" />
     <ClCompile Include="MenuSystem.cpp" />
     <ClCompile Include="TextBox.cpp" />
   </ItemGroup>

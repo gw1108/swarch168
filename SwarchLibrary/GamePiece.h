@@ -37,8 +37,8 @@ public:
 	void ResetSize(void);
 	
 	// Inlined Methods
-	int GetDimension(void){ return m_currentDimension; }
-	int GetMoveRate(void){ return m_moveRate; }
+	float GetDimension(void){ return m_currentDimension; }
+	float GetMoveRate(void){ return m_moveRate; }
 
 	// ============================================================================================
 	// Class Data Members

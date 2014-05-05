@@ -27,7 +27,8 @@ class GameData
 public:
 
 	// Command Code Enum
-	enum CommandCode {INITIALIZE, GAME_UPDATE, PLAYER_UPDATE};
+	enum LoginResponse {NEW_ACCOUNT, ACCEPTED, WRONG_PW};
+	enum CommandCode {LOG_IN, INITIALIZE, GAME_UPDATE, PLAYER_UPDATE};
 
 	// ============================================================================================
 	// Methods
