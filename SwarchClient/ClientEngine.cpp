@@ -230,8 +230,6 @@ void ClientEngine::CheckWallCollisions()
 	{
 		m_assignedPiece->ReSpawn();
 	}
-
-
 }
 
 // ===== Render ===================================================================================
