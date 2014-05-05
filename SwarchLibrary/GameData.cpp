@@ -12,6 +12,7 @@
 #include "GamePiece.h"
 
 // Set Constants
+const int GameData::SERVER_PORT = 88585;
 const int GameData::ENGINE_SPEED = 17;
 const int GameData::BOARD_WIDTH = 800;
 const int GameData::BOARD_HEIGHT = 600;

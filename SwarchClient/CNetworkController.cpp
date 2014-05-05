@@ -14,7 +14,6 @@
 #include "LogInData.h"
 
 const int CNetworkController::MAX_QUEUE = 1;
-const int CNetworkController::SERVER_PORT = 88585;
 
 // ===== Constructor ==============================================================================
 // Constructor will perform basic initialization of the class. 

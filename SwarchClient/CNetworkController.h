@@ -46,7 +46,6 @@ public:
 	// ============================================================================================
 
 	static const int MAX_QUEUE; 
-	static const int SERVER_PORT; 
 
 	// Constructor/Destructor
 	CNetworkController(const sf::Clock& gameClock);
