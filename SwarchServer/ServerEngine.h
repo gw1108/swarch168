@@ -2,6 +2,7 @@
 #include "Database.h"
 #include "SFML\Network.hpp"
 #include "LogIn.h"
+#include "SNetworkController.h"
 
 class ServerEngine
 {
@@ -17,7 +18,5 @@ private:
 	bool serverIsRunning;
 	unsigned short currentPort;
 	LogIn* logInHandler;
-	sf::TcpListener listener;
-	sf::SocketSelector selector;
-	std::vector<sf::TcpSocket*> clients;		//todo make this a POD struct
+	SNetworkController networkController;
 };
