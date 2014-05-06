@@ -162,10 +162,6 @@ void CNetworkController::SocketListening(void)
 
 				m_dataLock.unlock();	// Unlock Data
 			}
-			else if(cmdCode == GameData::LOG_IN)
-			{
-				//respond whether the player made a new account, wrong pw, successful
-			}
 		}
 		else if(receiveStatus == sf::TcpSocket::Disconnected)
 		{
