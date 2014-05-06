@@ -2,7 +2,7 @@
 #include <vector>
 #include <Windows.h>
 #include <wincrypt.h>
-#include <openssl\sha.h>
+//#include <openssl\sha.h>
 #include <iostream>
 
 using namespace std;
@@ -114,7 +114,7 @@ bool LogIn::slowEquals(string a, string b)
 
 void LogIn::sha256(const char* inputString, char outputBuffer[65])
 {
-    unsigned char hash[SHA256_DIGEST_LENGTH];
+    /*unsigned char hash[SHA256_DIGEST_LENGTH];
     SHA256_CTX sha256;
     SHA256_Init(&sha256);
     SHA256_Update(&sha256, inputString, strlen(inputString));
@@ -123,5 +123,5 @@ void LogIn::sha256(const char* inputString, char outputBuffer[65])
     {
         sprintf_s(outputBuffer + (i * 2), 65, "%02x", hash[i]);
     }
-    outputBuffer[64] = 0;
+    outputBuffer[64] = 0;*/
 }

@@ -36,11 +36,7 @@ CNetworkController::CNetworkController(const sf::Clock& gameClock) :
 // ================================================================================================
 CNetworkController::~CNetworkController()
 {
-	if(m_listeningThread != NULL)
-	{
-		StopListeningThread();
-		delete m_listeningThread;
-	}
+	StopListeningThread();
 }
 
 // ===== Connect ==================================================================================
@@ -102,11 +98,7 @@ void CNetworkController::StopListeningThread(void)
 	if (m_listeningThread != NULL)
 	{
 		m_connected = false;		// Set Thread-Loop conditional to false
-		//kill the thread if it times out
-		DWORD secondsToWait = 2000;
-		//m_listeningThread->join();	// Wait for thread to end
-		WaitForSingleObject(m_listeningThread, secondsToWait);
-		
+		m_listeningThread->join();	// Wait for thread to end
 		delete m_listeningThread;
 	}
 }
@@ -124,6 +116,7 @@ void CNetworkController::SocketListening(void)
 	sf::TcpSocket::Status receiveStatus;
 	sf::Packet receivedPacket;
 	sf::Uint8 cmdCode;
+	m_serverConnection.setBlocking(false);
 
 	while(m_connected)
 	{

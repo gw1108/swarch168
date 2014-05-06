@@ -4,6 +4,7 @@
 #include <mutex>
 #include <thread>
 #include "LogIn.h"
+#include <list>
 
 class SNetworkController
 {
@@ -16,8 +17,9 @@ public:
 	GameData getNextGameData(void);
 	bool isGameDataAvailible(void);
 private:
-	void waitForUsers(void);
-	void removeDisconnectedClients(void);
+	void run(void);
+	void newConnections(sf::TcpSocket* socket);
+	void updateConnections(void);
 	
 	//static members
 	static const float CHECK_FREQUENCY;
@@ -27,9 +29,7 @@ private:
 	bool serverRunning;
 	sf::TcpListener listener;
 	sf::SocketSelector selector;
-	std::vector<sf::TcpSocket*> clients;
-	std::vector<sf::TcpSocket*> clientsToRemove;
+	std::list<sf::TcpSocket*> clients;
 	std::vector<GameData> m_data;
 	std::mutex m_datalock;
 };
-
