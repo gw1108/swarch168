@@ -94,7 +94,7 @@ void CNetworkController::Disconnect(void)
 // ===== StopListeningThread ======================================================================
 // Method will terminate the socket listening thread.
 //
-// Input: none
+// Input: none 
 // Output: none
 // ================================================================================================
 void CNetworkController::StopListeningThread(void)
@@ -102,7 +102,11 @@ void CNetworkController::StopListeningThread(void)
 	if (m_listeningThread != NULL)
 	{
 		m_connected = false;		// Set Thread-Loop conditional to false
-		m_listeningThread->join();	// Wait for thread to end
+		//kill the thread if it times out
+		DWORD secondsToWait = 2000;
+		//m_listeningThread->join();	// Wait for thread to end
+		WaitForSingleObject(m_listeningThread, secondsToWait);
+		
 		delete m_listeningThread;
 	}
 }

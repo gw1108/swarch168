@@ -88,9 +88,13 @@ void SNetworkController::waitForUsers(void)
 							packet.clear();
 
 							//send back packet
-							packet << GameData::LOG_IN;
-							packet << responseCode;
-							client.send(packet);
+							sf::Uint8 newCode = GameData::INITIALIZE;
+							sf::Uint8 serverResponseCode = responseCode;
+							sf::Uint8 clientNumber = 1;
+							packet << newCode;
+							packet << serverResponseCode;
+							packet << clientNumber;		//todo next number
+							std::cout << client.send(packet) << std::endl;
 
 							//TODO : send initialize packet somewhere
 						}
@@ -106,7 +110,7 @@ void SNetworkController::waitForUsers(void)
 			}
 			m_datalock.unlock();
 
-			removeDisconnectedClients();
+			//removeDisconnectedClients();
 		}
 	}
 }
