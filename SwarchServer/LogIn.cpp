@@ -3,6 +3,7 @@
 #include <Windows.h>
 #include <wincrypt.h>
 #include <openssl\sha.h>
+#include <iostream>
 
 using namespace std;
 
@@ -15,7 +16,8 @@ LogIn::LogIn(void)
 	//if table not created yet create table
 	if(!database->hasTable("Users"))
 	{
-		database->query("CREATE TABLE Users (UserName varchar(255), Passwords varchar(255), Salt varchar(255));");
+		cout << "Table not found. New table created" << endl; 
+		database->query("CREATE TABLE Users (UserName varchar(255), Passwords varchar(255), Salt VARBINARY(255));");
 	}
 	//table will have 3 columns	UserName | Passwords | Salt
 	//table will be called Users
@@ -30,23 +32,27 @@ LogIn::~LogIn(void)
 
 //logins in the user
 //if the user doesn't exist in the database automatically create a new user
-//returns true if successful
-//false otherwise
-bool LogIn::loginUser(string username, string password)
+//returns a logindata int code
+GameData::LoginResponse LogIn::loginUser(string username, string password)
 {
 	//check user in database
 	vector<vector<string>> output;
-	output = database->query("SELECT * FROM Users WHERE UserName = " + username + ";");
+	output = database->query("SELECT * FROM Users WHERE UserName = '" + username + "';");
 	if(output.empty())
 	{
 		//create the user
 		//create a random salt
-		string userSalt = reinterpret_cast<char const*>(getNewSalt());
-		string hashedPassword = hashPassword(password, userSalt);
+		unsigned char* userSalt = getNewSalt();
+		//TODO DELETE
+		//userSalt = reinterpret_cast<BYTE*>("THESALT");
+		string hashedPassword = hashPassword(password, reinterpret_cast<char*>(userSalt));
 
-		database->query("INSERT INTO Users (UserName, Password, Salt) VALUES (" + username + "," + hashedPassword + "," + userSalt + ");");
+		string command = "INSERT INTO Users (UserName, Passwords, Salt) VALUES ('" + username + "','" + hashedPassword + "','";
+		command.append(reinterpret_cast<char*>(userSalt));
+		command = command + "');";
+		database->query(command);
 		//asuming no errors let the user log in
-		return true;
+		return GameData::LoginResponse::NEW_ACCOUNT;
 	}
 	else
 	{
@@ -55,7 +61,14 @@ bool LogIn::loginUser(string username, string password)
 		string userSalt = output.at(0).at(2);
 
 		string inputtedPassword = hashPassword(password, userSalt);
-		return slowEquals(inputtedPassword, dbPassword);
+		if(slowEquals(inputtedPassword, dbPassword))
+		{
+			return GameData::LoginResponse::ACCEPTED;
+		}
+		else
+		{
+ 			return GameData::LoginResponse::WRONG_PW;
+		}
 	}
 }
 

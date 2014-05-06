@@ -10,13 +10,8 @@ public:
 	ServerEngine(void);
 	~ServerEngine(void);
 	void run(void);
-	void waitForUsers(void);
-
-	static const unsigned short DEFAULT_PORT;
-
+	void stop(void);
 private:
 	bool serverIsRunning;
-	unsigned short currentPort;
-	LogIn* logInHandler;
 	SNetworkController networkController;
 };

@@ -1,30 +1,32 @@
 #include "ServerEngine.h"
+#include <iostream>
 
 using namespace std;
 
-const unsigned short ServerEngine::DEFAULT_PORT = 53000;
-
 ServerEngine::ServerEngine(void)
 {
-	currentPort = DEFAULT_PORT;
-	logInHandler = new LogIn();
 }
 
 ServerEngine::~ServerEngine(void)
 {
-	delete logInHandler;
 }
-
 
 void ServerEngine::run(void)
 {
+	cout << "starting to run" << endl;
 	serverIsRunning = true;
-	
+	networkController.startNetwork();
+
 	while(serverIsRunning)
 	{
-		//listen for people
-		networkController.waitForUsers();
-
 		//update people
 	}
+	networkController.stopNetwork();
+	cout << "finished running" << endl;
+}
+
+void ServerEngine::stop(void)
+{
+	cout << "server stopping" << endl;
+	serverIsRunning = false;
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include "Database.h"
+#include <GameData.h>
 
 class LogIn
 {
@@ -7,7 +8,7 @@ public:
 	LogIn(void);
 	~LogIn(void);
 
-	bool loginUser(std::string username, std::string password);
+	GameData::LoginResponse loginUser(std::string username, std::string password);
 private:
 	unsigned char* getNewSalt();
 	std::string hashPassword(std::string password, std::string salt);

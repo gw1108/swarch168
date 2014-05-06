@@ -3,6 +3,7 @@
 #include "GameData.h"
 #include <mutex>
 #include <thread>
+#include "LogIn.h"
 
 class SNetworkController
 {
@@ -13,14 +14,21 @@ public:
 	void startNetwork(void);
 	void stopNetwork(void);
 	GameData getNextGameData(void);
+	bool isGameDataAvailible(void);
 private:
-	void listenUsers(void);
 	void waitForUsers(void);
+	void removeDisconnectedClients(void);
 	
-	std::thread m_networkThread;
+	//static members
+	static const float CHECK_FREQUENCY;
+
+	LogIn* logInHandler;
+	std::thread* m_networkThread;
+	bool serverRunning;
 	sf::TcpListener listener;
 	sf::SocketSelector selector;
-	std::vector<sf::TcpSocket*> clients;		//todo make this a POD struct
+	std::vector<sf::TcpSocket*> clients;
+	std::vector<sf::TcpSocket*> clientsToRemove;
 	std::vector<GameData> m_data;
 	std::mutex m_datalock;
 };
