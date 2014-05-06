@@ -44,7 +44,6 @@ int CALLBACK WinMain(_In_  HINSTANCE hInstance, _In_  HINSTANCE hPrevInstance, _
 		ClientEngine engine(mainWindow, gameFont, 1, menu.GetNameString());
 		engine.Run();
 	}
-
 	mainWindow.close();
 	return 0;
 }

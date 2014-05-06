@@ -66,39 +66,39 @@ void MenuSystem::Run(void)
 
 	while(m_running)
 	{
-			// Loop through events and get character input
-			sf::Event event;
-			while(m_mainWindow.pollEvent(event))
+		// Loop through events and get character input
+		sf::Event event;
+		while(m_mainWindow.pollEvent(event))
+		{
+			if((event.type == sf::Event::Closed) || ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape)))
 			{
-				if((event.type == sf::Event::Closed) || ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape)))
-				{
-					m_running = false;
-				}
-				else if((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Return))
-				{
-					AttemptConnection();
+				m_running = false;
+			}
+			else if((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Return))
+			{
+				AttemptConnection();
 
-					// Clear Any input that was entered during connection attempt
-					while(m_mainWindow.pollEvent(event)){}
-				}
-				else if((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Tab))
-				{
-					NextBox();
-				}
-				else if((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::BackSpace))
-				{
-					m_selectedBox->DeleteLast();
-				}
-				else if(event.type == sf::Event::TextEntered)
-				{
-					char input = event.text.unicode;
-					m_selectedBox->AddCharacter(input);
-				}
-			} 
-			
-			Render();
-		}
+				// Clear Any input that was entered during connection attempt
+				while(m_mainWindow.pollEvent(event)){}
+			}
+			else if((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Tab))
+			{
+				NextBox();
+			}
+			else if((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::BackSpace))
+			{
+				m_selectedBox->DeleteLast();
+			}
+			else if(event.type == sf::Event::TextEntered)
+			{
+				char input = event.text.unicode;
+				m_selectedBox->AddCharacter(input);
+			}
+		} 
+
+		Render();
 	}
+}
 
 // ===== Render ===================================================================================
 // Method will render the main menu window.

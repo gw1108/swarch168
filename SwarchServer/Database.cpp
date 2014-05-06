@@ -22,12 +22,13 @@ int Database::open(char* filename)
 //ie SELECT a, b from table_name
 //returns vector<string> row
 //a value : row.at(0) | b value : row.at(1)
-std::vector<std::vector<std::string>> Database::query(char* query)
+std::vector<std::vector<std::string>> Database::query(string query)
 {
 	sqlite3_stmt* statement;
 	vector<vector<string>> results;
+	const char* cQuery = query.c_str();
 
-	if(sqlite3_prepare_v2(db, query, -1, &statement, 0) == SQLITE_OK)
+	if(sqlite3_prepare_v2(db, cQuery, -1, &statement, 0) == SQLITE_OK)
 	{
 		int cols = sqlite3_column_count(statement);
 		int result = 0;
@@ -61,11 +62,6 @@ std::vector<std::vector<std::string>> Database::query(char* query)
 		cout << query << " " << error << endl;
 
 	return results;
-}
-
-std::vector<std::vector<std::string>> Database::query(string query)
-{
-	return this->query(query.c_str());
 }
 
 void Database::close()
