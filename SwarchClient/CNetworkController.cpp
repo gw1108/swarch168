@@ -36,11 +36,7 @@ CNetworkController::CNetworkController(const sf::Clock& gameClock) :
 // ================================================================================================
 CNetworkController::~CNetworkController()
 {
-	if(m_listeningThread != NULL)
-	{
-		StopListeningThread();
-		delete m_listeningThread;
-	}
+	StopListeningThread();
 }
 
 // ===== Connect ==================================================================================
@@ -94,7 +90,7 @@ void CNetworkController::Disconnect(void)
 // ===== StopListeningThread ======================================================================
 // Method will terminate the socket listening thread.
 //
-// Input: none
+// Input: none 
 // Output: none
 // ================================================================================================
 void CNetworkController::StopListeningThread(void)
@@ -120,6 +116,7 @@ void CNetworkController::SocketListening(void)
 	sf::TcpSocket::Status receiveStatus;
 	sf::Packet receivedPacket;
 	sf::Uint8 cmdCode;
+	m_serverConnection.setBlocking(false);
 
 	while(m_connected)
 	{
@@ -161,10 +158,6 @@ void CNetworkController::SocketListening(void)
 				m_dataQueue.push_back(newData);
 
 				m_dataLock.unlock();	// Unlock Data
-			}
-			else if(cmdCode == GameData::LOG_IN)
-			{
-				//respond whether the player made a new account, wrong pw, successful
 			}
 		}
 		else if(receiveStatus == sf::TcpSocket::Disconnected)

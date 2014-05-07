@@ -2,7 +2,7 @@
 #include <vector>
 #include <Windows.h>
 #include <wincrypt.h>
-#include <openssl\sha.h>
+//#include <openssl\sha.h>
 #include <iostream>
 
 using namespace std;
@@ -42,13 +42,14 @@ GameData::LoginResponse LogIn::loginUser(string username, string password)
 	{
 		//create the user
 		//create a random salt
-		unsigned char* userSalt = getNewSalt();
+		//unsigned char* userSalt = getNewSalt();
 		//TODO DELETE
 		//userSalt = reinterpret_cast<BYTE*>("THESALT");
-		string hashedPassword = hashPassword(password, reinterpret_cast<char*>(userSalt));
+		//string hashedPassword = hashPassword(password, reinterpret_cast<char*>(userSalt));
 
-		string command = "INSERT INTO Users (UserName, Passwords, Salt) VALUES ('" + username + "','" + hashedPassword + "','";
-		command.append(reinterpret_cast<char*>(userSalt));
+		//string command = "INSERT INTO Users (UserName, Passwords, Salt) VALUES ('" + username + "','" + hashedPassword + "','";
+		string command = "INSERT INTO Users (UserName, Passwords, Salt) VALUES ('" + username + "','" + password + "','";
+		//command.append(reinterpret_cast<char*>(userSalt));
 		command = command + "');";
 		database->query(command);
 		//asuming no errors let the user log in
@@ -58,10 +59,10 @@ GameData::LoginResponse LogIn::loginUser(string username, string password)
 	{
 		//user exists check credentials
 		string dbPassword = output.at(0).at(1);
-		string userSalt = output.at(0).at(2);
+		//string userSalt = output.at(0).at(2);
 
-		string inputtedPassword = hashPassword(password, userSalt);
-		if(slowEquals(inputtedPassword, dbPassword))
+		//string inputtedPassword = hashPassword(password, userSalt);
+		if(slowEquals(password, dbPassword))
 		{
 			return GameData::LoginResponse::ACCEPTED;
 		}
@@ -90,11 +91,11 @@ string LogIn::hashPassword(string password, string salt)
 	char buffer[65];
 	//append password and salt together
 	string appended = salt + password;
-	sha256(&appended[0], buffer);
+	sha256(appended.c_str(), buffer);
 
 	//return password
-	appended = buffer;
-	return appended;
+	string newPassword = buffer;
+	return newPassword;
 }
 
 //returns tru if the two strings are equal in length constant time
@@ -111,9 +112,9 @@ bool LogIn::slowEquals(string a, string b)
 	return diff == 0;
 }
 
-void LogIn::sha256(char* inputString, char outputBuffer[65])
+void LogIn::sha256(const char* inputString, char outputBuffer[65])
 {
-    unsigned char hash[SHA256_DIGEST_LENGTH];
+    /*unsigned char hash[SHA256_DIGEST_LENGTH];
     SHA256_CTX sha256;
     SHA256_Init(&sha256);
     SHA256_Update(&sha256, inputString, strlen(inputString));
@@ -122,5 +123,5 @@ void LogIn::sha256(char* inputString, char outputBuffer[65])
     {
         sprintf_s(outputBuffer + (i * 2), 65, "%02x", hash[i]);
     }
-    outputBuffer[64] = 0;
+    outputBuffer[64] = 0;*/
 }
