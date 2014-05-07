@@ -38,6 +38,8 @@ GameData::LoginResponse LogIn::loginUser(string username, string password)
 	//check user in database
 	vector<vector<string>> output;
 	output = database->query("SELECT * FROM Users WHERE UserName = '" + username + "';");
+//	output = database->query("SELECT * FROM Users WHERE UserName = :Name");
+
 	if(output.empty())
 	{
 		//create the user

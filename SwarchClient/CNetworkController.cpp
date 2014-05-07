@@ -225,9 +225,10 @@ void CNetworkController::SendDirectionChange(GamePiece::Direction direction)
 {
 	sf::Uint8 commandCode = GameData::PLAYER_UPDATE;
 	sf::Int32 timeStamp = m_gameClock.getElapsedTime().asMilliseconds();
+	sf::Uint8 sfDirection = direction;
 
 	sf::Packet dataPacket;
-	dataPacket << commandCode << direction << timeStamp;
+	dataPacket << commandCode << timeStamp << sfDirection;
 
 	SendPacket(dataPacket);
 }

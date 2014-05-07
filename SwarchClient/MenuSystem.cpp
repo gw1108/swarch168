@@ -256,6 +256,7 @@ void MenuSystem::AttemptConnection(void)
 	if(m_nwcRef.Connect(ipString, GameData::SERVER_PORT))
 	{
 		m_msgField.setString("Connected to server, sending login data.");
+		Render();
 
 		// Send Log-In Packet
 		m_nwcRef.SendLogIn(userName, md5PW);

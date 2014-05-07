@@ -72,10 +72,10 @@ void SNetworkController::updateConnections(void)
 	{
 		sf::TcpSocket& client = **it;
 		sf::Packet packet;
-		std::cout << "receiving packet " << std::endl;
+//		std::cout << "receiving packet " << std::endl;
 		sf::Socket::Status socketStatus = client.receive(packet);
 
-		std::cout << "The socket status is : " + socketStatus << std::endl;
+//		std::cout << "The socket status is : " + socketStatus << std::endl;
 
 		if(socketStatus == sf::TcpSocket::Done)
 		{
@@ -119,7 +119,7 @@ void SNetworkController::updateConnections(void)
 			it = clients.erase(it);
 		}
 	}
-	std::cout << "Iterated through all the clients." << std::endl;
+//	std::cout << "Iterated through all the clients." << std::endl;
 }
 
 GameData SNetworkController::getNextGameData(void)

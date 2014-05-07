@@ -30,7 +30,7 @@
     <ClInclude Include="sqlite3ext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Jay%27s Realm\GameDev\swarch168\SwarchServer\SNetworkController.h">
+    <ClInclude Include="SNetworkController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -50,7 +50,7 @@
     <ClCompile Include="sqlite3.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Jay%27s Realm\GameDev\swarch168\SwarchServer\SNetworkController.cpp">
+    <ClCompile Include="SNetworkController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
