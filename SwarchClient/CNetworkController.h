@@ -2,7 +2,7 @@
 // Filename: "CNetworkController.h"
 // ================================================================================================
 // Author(s): Travis Smith
-// Last Modified: May 04, 2014
+// Last Modified: May 13, 2014
 // ================================================================================================
 // Class Description:
 // 
@@ -35,6 +35,7 @@
 #include <SFML\System\Clock.hpp>
 #include "GameData.h"
 #include "GamePiece.h"
+#include "NewPlayer.h"
 
 class CNetworkController
 {
@@ -55,14 +56,14 @@ public:
 	bool Connect(std::string ipAddress, int portNumber);
 	void Disconnect(void);
 	void StopListeningThread(void);
-	GameData GetNextData(void);
+	bool GetNextData(GameData &dataRef);
+	bool GetNewPlayer(NewPlayer &dataRef);
 	void SendLogIn(std::string name, std::string pw);
 	void SendDirectionChange(GamePiece::Direction direction);
 
 	// Inlined Methods
-	bool IsConnected(){ return m_connected; }
+	bool IsConnected(void){ return m_connected; }
 	int GetPlayerNumber(void){ return m_playerNum; }
-	bool ShouldStartGame(void){ return m_startGame; }
 	bool ServerResponded(void) { return m_responded; }
 	int GetServerResponse(void) { return m_serverResponse; }
 
@@ -81,10 +82,13 @@ private:
 	std::list<GameData> m_dataQueue;
 	std::mutex m_dataLock;
 
+	// NewPlayer Queue
+	std::list<NewPlayer> m_newPlayerQueue;
+	std::mutex m_playerLock;
+
 	// Client Data
 	int m_playerNum;
 	const sf::Clock  &m_gameClock;
-	bool m_startGame;
 
 	// Login Data
 	bool m_responded;
@@ -96,7 +100,6 @@ private:
 
 	// Prototypes
 	void SocketListening(void);
-	void SendPacket(sf::Packet packet);
 };
 
 #endif

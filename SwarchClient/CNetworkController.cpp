@@ -2,7 +2,7 @@
 // Filename: "CNetworkController.cpp"
 // ================================================================================================
 // Author(s): Travis Smith
-// Last Modified: May 04, 2014
+// Last Modified: May 13, 2014
 // ================================================================================================
 // This is the class implementation file for the CNetworkController class. For a class description
 // see the header file "CNetworkController.h"
@@ -25,8 +25,9 @@ CNetworkController::CNetworkController(const sf::Clock& gameClock) :
 	m_connected(false),
 	m_dataQueue(),
 	m_dataLock(),
+	m_newPlayerQueue(),
+	m_playerLock(),
 	m_playerNum(-1),
-	m_startGame(false),
 	m_responded(false),
 	m_serverResponse(-1)
 {}
@@ -37,6 +38,8 @@ CNetworkController::CNetworkController(const sf::Clock& gameClock) :
 CNetworkController::~CNetworkController()
 {
 	StopListeningThread();
+	m_dataQueue.clear();
+	m_newPlayerQueue.clear();
 }
 
 // ===== Connect ==================================================================================
@@ -73,7 +76,8 @@ bool CNetworkController::Connect(std::string ipAddress, int portNumber)
 }
 
 // ===== Disconnect ===============================================================================
-// Terminates the current connection to the server, if it exsists.
+// Terminates the current connection to the server. This method will also reset the members used
+// in setting up the initial connection. 
 //
 // Input: none
 // Output: none
@@ -116,7 +120,6 @@ void CNetworkController::SocketListening(void)
 	sf::TcpSocket::Status receiveStatus;
 	sf::Packet receivedPacket;
 	sf::Uint8 cmdCode;
-	m_serverConnection.setBlocking(false);
 
 	while(m_connected)
 	{
@@ -138,21 +141,27 @@ void CNetworkController::SocketListening(void)
 				m_serverResponse = serverResponse;
 				m_playerNum = playerNum;
 			}
+			else if(cmdCode == GameData::NEW_PLAYER)
+			{
+				NewPlayer newPlayer;
+				receivedPacket >> newPlayer;
+
+				m_playerLock.lock();		// Lock Data
+
+				m_newPlayerQueue.push_back(newPlayer);
+
+				m_playerLock.unlock();	// Unlock Data
+			}
 			else if(cmdCode == GameData::GAME_UPDATE)
 			{
 				GameData newData;
 				receivedPacket >> newData;
 
-				if(!m_startGame)
-				{
-					m_startGame = newData.startGame;	// Check for GameStart Command
-				}
-
 				m_dataLock.lock();		// Lock Data
 
 				if(m_dataQueue.size() > MAX_QUEUE)
 				{
-					m_dataQueue.pop_front();
+					m_dataQueue.pop_front();	// Remove the oldest packet from queue
 				}
 
 				m_dataQueue.push_back(newData);
@@ -163,30 +172,71 @@ void CNetworkController::SocketListening(void)
 		else if(receiveStatus == sf::TcpSocket::Disconnected)
 		{
 			m_connected = false;
+			m_responded = false;
+			m_serverResponse = (-1);
 		}
 	}
 }
 
 // ===== GetNextData ==============================================================================
-// The method will return the most recent GameData update received by the server. It will be 
-// controlled by a mutex lock to ensure is doesn't grab data while the listening thread is writing
-// new data.
+// The method will update the passed GameData reference with the most recently sent data from the
+// server. If no new data exists from the server, the method will not change the passed reference
+// and return false.
 // 
-// Input: none
+// Input:
+//	[IN/OUT] GameData &dataRef	-	a reference to the clients GameData object
 //
 // Output:
-//	[OUT] GameData m_newData	-	the latest GameData update from the server
+//	[OUT] bool					-	true if updated, false otherwise
 // ================================================================================================
-GameData CNetworkController::GetNextData(void)
+bool CNetworkController::GetNextData(GameData &dataRef)
 {
-	m_dataLock.lock();		// Lock Data
+	if(!m_dataQueue.empty())
+	{
+		m_dataLock.lock();		// Lock Data
 
-	GameData data = m_dataQueue.front();
-	m_dataQueue.pop_front();
+		GameData data = m_dataQueue.front();
+		dataRef.Copy(data);
+		m_dataQueue.pop_front();
 
-	m_dataLock.unlock();	// Unlock Data
+		m_dataLock.unlock();	// Unlock Data
 
-	return data;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+// ===== GetNewPlayer =============================================================================
+// The method will update the passed NewPlayer reference with the next player that joined the game.
+// Will return false if no new players exist.
+// 
+// Input:
+//	[IN/OUT] NewPlayer &dataRef	-	a reference to the clients NewPlayer object
+//
+// Output:
+//	[OUT] bool					-	true if updated, false otherwise
+// ================================================================================================
+bool CNetworkController::GetNewPlayer(NewPlayer &dataRef)
+{
+	if(!m_newPlayerQueue.empty())
+	{
+		m_playerLock.lock();		// Lock Data
+
+		NewPlayer data = m_newPlayerQueue.front();
+		dataRef.Copy(data);
+		m_newPlayerQueue.pop_front();
+
+		m_playerLock.unlock();	// Unlock Data
+
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 // ===== SendLogIn ================================================================================
@@ -208,7 +258,7 @@ void CNetworkController::SendLogIn(std::string name, std::string pw)
 	sf::Packet dataPacket;
 	dataPacket << commandCode << data << timeStamp;
 
-	SendPacket(dataPacket);
+	m_serverConnection.send(dataPacket);
 }
 
 // ===== SendDirectionChange =========================================================================
@@ -230,21 +280,7 @@ void CNetworkController::SendDirectionChange(GamePiece::Direction direction)
 	sf::Packet dataPacket;
 	dataPacket << commandCode << timeStamp << sfDirection;
 
-	SendPacket(dataPacket);
+	m_serverConnection.send(dataPacket);
 }
-
-// ===== SendPacket ===============================================================================
-// This method will send the packet to the server.
-//
-// Input: 
-//	[IN] sf::Packet packet - the packet to be sent
-//
-// Output: none
-// ================================================================================================
-void CNetworkController::SendPacket(sf::Packet packet)
-{
-	m_serverConnection.send(packet);
-}
-
 
 

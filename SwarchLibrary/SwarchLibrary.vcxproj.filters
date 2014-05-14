@@ -30,6 +30,9 @@
     <ClCompile Include="LogInData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="NewPlayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePiece.h">
@@ -42,6 +45,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LogInData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NewPlayer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

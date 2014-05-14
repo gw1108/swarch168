@@ -2,7 +2,7 @@
 // Filename: "GameData.cpp"
 // ================================================================================================
 // Author(s): Travis Smith
-// Last Modified: Apr 16, 2014
+// Last Modified: May 13, 2014
 // ================================================================================================
 // This is the class implementation file for the GameData class. For a class description see the 
 // header file "GameData.h"
@@ -12,7 +12,7 @@
 #include "GamePiece.h"
 
 // Set Constants
-const int GameData::SERVER_PORT = 88585;
+const int GameData::SERVER_PORT = 30000;
 const int GameData::ENGINE_SPEED = 17;
 const int GameData::BOARD_WIDTH = 800;
 const int GameData::BOARD_HEIGHT = 600;
@@ -31,22 +31,73 @@ GameData::GameData(void) :
 	player1X(BOARD_WIDTH / 2),			
 	player1Y(BOARD_HEIGHT / 2),				
 	player1Direction(GamePiece::DOWN), 	
-	player1Died(false),
+	player1Dead(false),
+	player1Score(0),
 
 	player2X(BOARD_WIDTH / 2),			
 	player2Y(BOARD_HEIGHT / 2),				
 	player2Direction(GamePiece::DOWN), 	
-	player2Died(false),
+	player2Dead(false),
+	player2Score(0),
 
 	player3X(BOARD_WIDTH / 2),			
 	player3Y(BOARD_HEIGHT / 2),				
 	player3Direction(GamePiece::DOWN), 	
-	player3Died(false),
+	player3Dead(false),
+	player3Score(0),
 
-	gameWon(false),
-	winningPlayer(0),
-	startGame(false)
+	pellet1X(0),
+	pellet1Y(0),
+	pellet2X(0),
+	pellet2Y(0),
+	pellet3X(0),
+	pellet3Y(0),
+	pellet4X(0),
+	pellet4Y(0),
+
+	reset(false)
 {}
+
+// ===== Copy =====================================================================================
+// Will copy all members belonging to the passed reference to the calling objects members. Will not
+// change the passed object.
+//
+// Input:
+//	[IN] const GameData& other	- the GameData object to be copied
+//
+// Output: none
+// ================================================================================================
+void GameData::Copy(const GameData &other)
+{
+	player1X = other.player1X;		
+	player1Y = other.player1Y;				
+	player1Direction = other.player1Direction;
+	player1Dead = other.player1Dead;
+	player1Score = other.player1Score;
+
+	player2X = other.player2X;		
+	player2Y = other.player2Y;				
+	player2Direction = other.player2Direction;
+	player2Dead = other.player2Dead;
+	player2Score = other.player2Score;
+
+	player3X = other.player3X;		
+	player3Y = other.player3Y;				
+	player3Direction = other.player3Direction;
+	player3Dead = other.player3Dead;
+	player3Score = other.player3Score;
+
+	pellet1X = other.pellet1X;
+	pellet1Y = other.pellet1Y;
+	pellet2X = other.pellet2X;
+	pellet2Y = other.pellet2Y;
+	pellet3X = other.pellet3X;
+	pellet3Y = other.pellet3Y;
+	pellet4X = other.pellet4X;
+	pellet4Y = other.pellet4Y;
+
+	reset = other.reset;
+}
 
 // ===== Packet Input Overload ====================================================================
 // This method overloads the stream operator used with the sf::Packet class so that the GameData 
@@ -61,7 +112,35 @@ GameData::GameData(void) :
 // ================================================================================================
 sf::Packet& operator<<(sf::Packet& packet, GameData& gameData)
 {
-	// TODO
+	packet << gameData.player1X 
+		<< gameData.player1Y 
+		<< gameData.player1Direction 
+		<< gameData.player1Dead 
+		<< gameData.player1Score
+
+		<< gameData.player2X 
+		<< gameData.player2Y 
+		<< gameData.player2Direction 
+		<< gameData.player2Dead 
+		<< gameData.player2Score 
+
+		<< gameData.player3X 
+		<< gameData.player3Y 
+		<< gameData.player3Direction 
+		<< gameData.player3Dead 
+		<< gameData.player3Score 
+		
+		<< gameData.pellet1X 
+		<< gameData.pellet1Y 
+		<< gameData.pellet2X 
+		<< gameData.pellet2Y 
+		<< gameData.pellet3X 
+		<< gameData.pellet3Y 
+		<< gameData.pellet4X 
+		<< gameData.pellet4Y 
+		
+		<< gameData.reset;
+
 	return packet;
 }
 
@@ -78,6 +157,34 @@ sf::Packet& operator<<(sf::Packet& packet, GameData& gameData)
 // ================================================================================================
 sf::Packet& operator>>(sf::Packet& packet, GameData& gameData)
 {
-	// TODO
+	packet >> gameData.player1X 
+		>> gameData.player1Y 
+		>> gameData.player1Direction 
+		>> gameData.player1Dead 
+		>> gameData.player1Score
+
+		>> gameData.player2X 
+		>> gameData.player2Y 
+		>> gameData.player2Direction 
+		>> gameData.player2Dead 
+		>> gameData.player2Score 
+
+		>> gameData.player3X 
+		>> gameData.player3Y 
+		>> gameData.player3Direction 
+		>> gameData.player3Dead 
+		>> gameData.player3Score 
+		
+		>> gameData.pellet1X 
+		>> gameData.pellet1Y 
+		>> gameData.pellet2X 
+		>> gameData.pellet2Y 
+		>> gameData.pellet3X 
+		>> gameData.pellet3Y 
+		>> gameData.pellet4X 
+		>> gameData.pellet4Y 
+		
+		>> gameData.reset;
+
 	return packet;
 }

@@ -90,12 +90,14 @@
     <ClCompile Include="GameData.cpp" />
     <ClCompile Include="GamePiece.cpp" />
     <ClCompile Include="LogInData.cpp" />
+    <ClCompile Include="NewPlayer.cpp" />
     <ClCompile Include="Pellet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameData.h" />
     <ClInclude Include="GamePiece.h" />
     <ClInclude Include="LogInData.h" />
+    <ClInclude Include="NewPlayer.h" />
     <ClInclude Include="Pellet.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -2,7 +2,7 @@
 // Filename: "GameData.h"
 // ================================================================================================
 // Author(s): Travis Smith
-// Last Modified: Apr 16, 2014
+// Last Modified: May 13, 2014
 // ================================================================================================
 // Class Description:
 // 
@@ -28,7 +28,7 @@ public:
 
 	// Command Code Enum
 	enum LoginResponse {NEW_ACCOUNT, ACCEPTED, WRONG_PW};
-	enum CommandCode {LOG_IN, INITIALIZE, GAME_UPDATE, PLAYER_UPDATE};
+	enum CommandCode {LOG_IN, INITIALIZE, GAME_UPDATE, PLAYER_UPDATE, NEW_PLAYER};
 
 	// ============================================================================================
 	// Methods
@@ -37,6 +37,9 @@ public:
 	// Constructor/Destructor Prototypes
 	GameData(void);
 	~GameData(void){}
+
+	// Method Prototypes
+	void Copy(const GameData &other);
 
 	// ============================================================================================
 	// Class Data Members
@@ -54,27 +57,35 @@ public:
 	float player1X;						// X-Coordinate of the player
 	float player1Y;						// Y-Coordinate of the player
 	int player1Direction;				// Direction of movement
-	bool player1Died;					// True if the player needs to be reset
+	bool player1Dead;					// True if the player is dead
+	int player1Score;					
 
 	// Player Two Data
 	float player2X;						// X-Coordinate of the player
 	float player2Y;						// Y-Coordinate of the player
 	int player2Direction;				// Direction of movement
-	bool player2Died;					// True if the player needs to be reset
+	bool player2Dead;					// True if the player is dead
+	int player2Score;	
 
 	// Player Three Data
 	float player3X;						// X-Coordinate of the player
 	float player3Y;						// Y-Coordinate of the player
 	int player3Direction;				// Direction of movement
-	bool player3Died;					// True if the player needs to be reset
+	bool player3Dead;					// True if the player is dead
+	int player3Score;	
 
 	// Pellet Data
-	// TODO
+	float pellet1X;
+	float pellet1Y;
+	float pellet2X;
+	float pellet2Y;
+	float pellet3X;
+	float pellet3Y;
+	float pellet4X;
+	float pellet4Y;
 
 	// Gameplay Data
-	bool gameWon;						// True if the game has been won
-	int winningPlayer;					// The winning player
-	bool startGame;						// Tells the client to start their game
+	bool reset;						// true if the game should be reset
 
 private:
 
