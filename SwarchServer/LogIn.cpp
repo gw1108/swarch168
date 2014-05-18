@@ -12,8 +12,8 @@ const int LogIn::KEYSIZE = 32;
 
 LogIn::LogIn(void)
 {
-	database = new Database("Database.db");
-	//table will have 3 columns	UserName | Passwords | Salt
+	database = new Database();
+	//table will have 2 columns	UserName | Passwords
 	//table will be called Users
 }
 

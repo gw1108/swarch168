@@ -6,16 +6,19 @@
 class Database
 {
 public:
-	Database(char* filename);
+	Database(const char* filename = Database::DEFAULT_DATABASE_NAME.c_str());
 	~Database(void);
 
-	int open(char* filename);
-	std::vector<std::vector<std::string>> query(std::string query);
+	static const std::string DEFAULT_DATABASE_NAME;
+
+	int open(const char* filename);
+	std::vector<std::vector<std::string>> query(const std::string query);
 	void close();
 	std::vector<std::vector<std::string>> getUsersWhere(std::string usernameCondition);
 	std::vector<std::vector<std::string>> insertUserInto(std::string userName, std::string password);
 private:
-	bool hasTable(std::string tableName);
+	bool hasTable(const std::string tableName);
+	std::vector<std::vector<std::string>> stepThroughQuery(sqlite3_stmt* statement);
 
 	sqlite3* db;
 };

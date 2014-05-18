@@ -2,7 +2,10 @@
 #include <iostream>
 
 using namespace std;
-Database::Database(char* filename)
+
+const std::string Database::DEFAULT_DATABASE_NAME = "Database.db";
+
+Database::Database(const char* filename)
 {
 	db = nullptr;
 	open(filename);
@@ -18,7 +21,7 @@ Database::~Database(void)
 {
 }
 
-int Database::open(char* filename)
+int Database::open(const char* filename)
 {
 	return sqlite3_open(filename, &db);
 }
@@ -27,7 +30,7 @@ int Database::open(char* filename)
 //ie SELECT a, b from table_name
 //returns vector<string> row
 //a value : row.at(0) | b value : row.at(1)
-std::vector<std::vector<std::string>> Database::query(string query)
+std::vector<std::vector<std::string>> Database::query(const string query)
 {
 	sqlite3_stmt* statement;
 	vector<vector<string>> results;
@@ -75,7 +78,7 @@ void Database::close()
 }
 
 //returns true if table exists
-bool Database::hasTable(string tableName)
+bool Database::hasTable(const string tableName)
 {
 	sqlite3_stmt* statement;
 	int rc;
@@ -98,38 +101,46 @@ vector<vector<string>> Database::insertUserInto(string userName, string userPass
 
 	if(sqlite3_prepare_v2(db, cQuery, -1, &statement, 0) == SQLITE_OK)
 	{
-		int cols = sqlite3_column_count(statement);
-		int result = 0;
+
 		sqlite3_bind_text(statement, 1, userName.c_str(), strlen(userName.c_str()), 0);
 		sqlite3_bind_text(statement, 2, userPassword.c_str(), strlen(userPassword.c_str()), 0);
-		do
-		{
-			result = sqlite3_step(statement);
-			if(result == SQLITE_ROW)
-			{
-				vector<string> values;
-				for(int col = 0; col < cols; col++)
-				{
-					char* ptr = (char*)sqlite3_column_text(statement, col);
-					if(ptr)
-					{
-						values.push_back(ptr);
-					}
-					else
-					{
-						values.push_back("");
-					}
-				}
-				results.push_back(values);
-			}
-		}
-		while(result == SQLITE_ROW);
-		sqlite3_finalize(statement);
+		results = stepThroughQuery(statement);
 	}
 	
 	string error = sqlite3_errmsg(db);
 	if(error != "not an error")
 		cout << "ERROR: " << error << endl;
 
+	return results;
+}
+
+vector<vector<string>> Database::stepThroughQuery(sqlite3_stmt* statement)
+{
+	vector<vector<string>> results;
+	int cols = sqlite3_column_count(statement);
+	int result = 0;
+	do
+	{
+		result = sqlite3_step(statement);
+		if(result == SQLITE_ROW)
+		{
+			vector<string> values;
+			for(int col = 0; col < cols; col++)
+			{
+				char* ptr = (char*)sqlite3_column_text(statement, col);
+				if(ptr)
+				{
+					values.push_back(ptr);
+				}
+				else
+				{
+					values.push_back("");
+				}
+			}
+			results.push_back(values);
+		}
+	}
+	while(result == SQLITE_ROW);
+	sqlite3_finalize(statement);
 	return results;
 }
