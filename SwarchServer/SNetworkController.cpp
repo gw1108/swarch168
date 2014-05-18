@@ -1,12 +1,14 @@
 #include "SNetworkController.h"
 #include "LogInData.h"
 #include <iostream>			//network controller debug
+#include <vector>
 
-const float SNetworkController::CHECK_FREQUENCY = 2;
+using namespace std;
 
 SNetworkController::SNetworkController(void)
 	:m_networkThread(NULL),
-	serverRunning(false)
+	serverRunning(false),
+	currentPlayerID(1)
 {
 	logInHandler = new LogIn();
 	listener.setBlocking(false);
@@ -17,9 +19,10 @@ SNetworkController::SNetworkController(void)
 
 SNetworkController::~SNetworkController(void)
 {
-	for(sf::TcpSocket* socket : clients)
+	for(auto client : clients)
 	{
-		delete socket;
+		client->disconnect();
+		delete client;
 	}
 	delete logInHandler;
 	stopNetwork();
@@ -29,12 +32,12 @@ void SNetworkController::run(void)
 {
 	std::cout << "Start waiting for connections"<< std::endl;
 
-	sf::TcpSocket* newClient = new sf::TcpSocket();
-	newClient->setBlocking(false);
+	sf::TcpSocket* player = new sf::TcpSocket();
+	player->setBlocking(false);
 	while(serverRunning)
 	{
 		//accept new connections
-		newConnections(newClient);
+		newConnections(player);
 
 		//update old connections
 		updateConnections();
@@ -42,26 +45,29 @@ void SNetworkController::run(void)
 	std::cout << "stopped waiting for connections" << std::endl;
 }
 
-void SNetworkController::newConnections(sf::TcpSocket* socket)
+void SNetworkController::newConnections(sf::TcpSocket* player)
 {
-	sf::Socket::Status listenerStatus = listener.accept(*socket);
-	if(listenerStatus == sf::Socket::Done)
+	if(clients.size() <= GameData::MAX_PLAYERS)//only listen for new connections if the server has space
 	{
-		clients.push_back(socket);
-		std::cout << "New client accepted" << std::endl;
-		socket = new sf::TcpSocket();
-		socket->setBlocking(false);
-	}
-	else if(listenerStatus == sf::Socket::NotReady)
-	{
-	}
-	else if(listenerStatus == sf::Socket::Error)
-	{
-		std::cout << "Error" << std::endl;
-	}
-	else if(listenerStatus == sf::Socket::Disconnected)
-	{
-		std::cout << "Listener disconnected" << std::endl;
+		sf::Socket::Status listenerStatus = listener.accept(*player);
+		if(listenerStatus == sf::Socket::Done)
+		{
+			clients.push_back(player);
+			std::cout << "New client accepted" << std::endl;
+			player = new sf::TcpSocket();
+			player->setBlocking(false);
+		}
+		else if(listenerStatus == sf::Socket::NotReady)
+		{
+		}
+		else if(listenerStatus == sf::Socket::Error)
+		{
+			std::cout << "Error" << std::endl;
+		}
+		else if(listenerStatus == sf::Socket::Disconnected)
+		{
+			std::cout << "Listener disconnected" << std::endl;
+		}
 	}
 }
 
@@ -70,12 +76,9 @@ void SNetworkController::updateConnections(void)
 	auto it = clients.begin();
 	while(it != clients.end())
 	{
-		sf::TcpSocket& client = **it;
+		sf::TcpSocket& client = (**it);
 		sf::Packet packet;
-//		std::cout << "receiving packet " << std::endl;
 		sf::Socket::Status socketStatus = client.receive(packet);
-
-//		std::cout << "The socket status is : " + socketStatus << std::endl;
 
 		if(socketStatus == sf::TcpSocket::Done)
 		{
@@ -98,25 +101,34 @@ void SNetworkController::updateConnections(void)
 				//send back packet
 				sf::Uint8 newCode = GameData::INITIALIZE;
 				sf::Uint8 serverResponseCode = responseCode;
-				sf::Uint8 clientNumber = 1;
+				sf::Uint8 clientNumber = (sf::Uint8)  getNewClientNumber();
 				packet << newCode;
 				packet << serverResponseCode;
 				packet << clientNumber;		//todo next number
+				cout << "Sending packet new player number is " << (int)clientNumber << endl;
 				std::cout << client.send(packet) << std::endl;
+			}
+			else if(commandCode == GameData::CommandCode::PLAYER_UPDATE)	//update the m_data queue
+			{
 
-				it++;		//go to next client
 			}
 			else
 			{
-				std::cout << "command is not log in" << std::endl;
-				it++;
+				std::cout << "command is code is : " << commandCode << std::endl;
 			}
+			it++;		//go to next client
 		}
 		else if(socketStatus == sf::TcpSocket::Disconnected)
 		{
 			//remove
 			std::cout <<" remove the socket plz" << std::endl;
+			client.disconnect();
 			it = clients.erase(it);
+			it = clients.end();
+		}
+		else
+		{
+			it++;
 		}
 	}
 //	std::cout << "Iterated through all the clients." << std::endl;
@@ -156,4 +168,9 @@ void SNetworkController::stopNetwork(void)
 		m_networkThread->join();
 		delete m_networkThread;
 	}
+}
+
+int SNetworkController::getNewClientNumber()
+{
+	return currentPlayerID++;
 }

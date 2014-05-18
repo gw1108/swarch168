@@ -19,7 +19,7 @@ void ServerEngine::run(void)
 
 	while(serverIsRunning)
 	{
-		//update people
+		//play the game on server and update people
 	}
 	networkController.stopNetwork();
 	cout << "finished running" << endl;

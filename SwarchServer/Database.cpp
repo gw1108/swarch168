@@ -6,6 +6,11 @@ Database::Database(char* filename)
 {
 	db = nullptr;
 	open(filename);
+	if(!hasTable("Users"))
+	{
+		cout << "Table not found. New table created : " << endl; 
+		query("CREATE TABLE Users (UserName varchar(255), Passwords varchar(255))");//, Salt VARBINARY(255));");
+	}
 }
 
 
@@ -69,6 +74,7 @@ void Database::close()
 	sqlite3_close(db);
 }
 
+//returns true if table exists
 bool Database::hasTable(string tableName)
 {
 	sqlite3_stmt* statement;
@@ -77,4 +83,53 @@ bool Database::hasTable(string tableName)
 	//if rc == 0 then table exists
 	rc = sqlite3_prepare_v2(db, query.c_str(), -1, &statement, 0);
 	return rc == 0;
+}
+
+vector<vector<string>> Database::getUsersWhere(string usernameCondition)
+{
+	return query("SELECT * FROM Users WHERE UserName = '" + usernameCondition + "';");
+}
+
+vector<vector<string>> Database::insertUserInto(string userName, string userPassword)
+{
+	sqlite3_stmt* statement;
+	vector<vector<string>> results;
+	const char* cQuery = "insert into Users (UserName, Passwords) VALUES (?,?)";
+
+	if(sqlite3_prepare_v2(db, cQuery, -1, &statement, 0) == SQLITE_OK)
+	{
+		int cols = sqlite3_column_count(statement);
+		int result = 0;
+		sqlite3_bind_text(statement, 1, userName.c_str(), strlen(userName.c_str()), 0);
+		sqlite3_bind_text(statement, 2, userPassword.c_str(), strlen(userPassword.c_str()), 0);
+		do
+		{
+			result = sqlite3_step(statement);
+			if(result == SQLITE_ROW)
+			{
+				vector<string> values;
+				for(int col = 0; col < cols; col++)
+				{
+					char* ptr = (char*)sqlite3_column_text(statement, col);
+					if(ptr)
+					{
+						values.push_back(ptr);
+					}
+					else
+					{
+						values.push_back("");
+					}
+				}
+				results.push_back(values);
+			}
+		}
+		while(result == SQLITE_ROW);
+		sqlite3_finalize(statement);
+	}
+	
+	string error = sqlite3_errmsg(db);
+	if(error != "not an error")
+		cout << "ERROR: " << error << endl;
+
+	return results;
 }

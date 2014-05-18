@@ -18,11 +18,9 @@ public:
 	bool isGameDataAvailible(void);
 private:
 	void run(void);
-	void newConnections(sf::TcpSocket* socket);
+	void newConnections(sf::TcpSocket* player);
 	void updateConnections(void);
-	
-	//static members
-	static const float CHECK_FREQUENCY;
+	int getNewClientNumber(void);
 
 	LogIn* logInHandler;
 	std::thread* m_networkThread;
@@ -32,4 +30,5 @@ private:
 	std::list<sf::TcpSocket*> clients;
 	std::vector<GameData> m_data;
 	std::mutex m_datalock;
+	int currentPlayerID;
 };

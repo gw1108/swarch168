@@ -14,4 +14,5 @@ public:
 private:
 	bool serverIsRunning;
 	SNetworkController networkController;
+	//vector of players
 };

@@ -11,9 +11,11 @@ public:
 
 	int open(char* filename);
 	std::vector<std::vector<std::string>> query(std::string query);
-
 	void close();
-	bool hasTable(std::string tableName);
+	std::vector<std::vector<std::string>> getUsersWhere(std::string usernameCondition);
+	std::vector<std::vector<std::string>> insertUserInto(std::string userName, std::string password);
 private:
+	bool hasTable(std::string tableName);
+
 	sqlite3* db;
 };

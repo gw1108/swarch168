@@ -33,6 +33,15 @@
     <ClInclude Include="SNetworkController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\Jay%27s Realm\GameDev\swarch168\SwarchServer\resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Jay%27s Realm\GameDev\swarch168\SwarchServer\resource1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Jay%27s Realm\GameDev\swarch168\SwarchServer\resource2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Database.cpp">
