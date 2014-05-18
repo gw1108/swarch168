@@ -62,12 +62,9 @@ bool CNetworkController::Connect(std::string ipAddress, int portNumber)
 	// Attempt to establish connection
 	sf::Time timeOut = sf::seconds(5); // Wait time for server connection
 	sf::Socket::Status rc;
-	
-	do
-	{
-		//retry connection until ready
-		rc = m_serverConnection.connect(ipAddress, portNumber, timeOut);
-	}while(rc == sf::TcpSocket::NotReady);
+	m_serverConnection.setBlocking(true);
+	rc = m_serverConnection.connect(ipAddress, portNumber, timeOut);
+	m_serverConnection.setBlocking(false);
 
 	if(rc == sf::TcpSocket::Done)
 	{
