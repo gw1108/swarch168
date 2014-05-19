@@ -6,14 +6,17 @@
 using namespace std;
 
 SNetworkController::SNetworkController(void)
-	:m_networkThread(NULL),
+	:logInHandler(new LogIn()),
+	m_networkThread(nullptr),
 	serverRunning(false),
+	listener(),
+	clients(),
+	m_data(),
+	m_datalock(),
 	currentPlayerID(1)
 {
-	logInHandler = new LogIn();
 	listener.setBlocking(false);
 	listener.listen(GameData::SERVER_PORT);
-	selector.add(listener);
 }
 
 

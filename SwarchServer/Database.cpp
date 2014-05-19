@@ -6,8 +6,8 @@ using namespace std;
 const std::string Database::DEFAULT_DATABASE_NAME = "Database.db";
 
 Database::Database(const char* filename)
+	:db(nullptr)
 {
-	db = nullptr;
 	open(filename);
 	if(!hasTable("Users"))
 	{

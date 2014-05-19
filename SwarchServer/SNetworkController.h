@@ -26,7 +26,6 @@ private:
 	std::thread* m_networkThread;
 	bool serverRunning;
 	sf::TcpListener listener;
-	sf::SocketSelector selector;
 	std::list<sf::TcpSocket*> clients;
 	std::vector<GameData> m_data;
 	std::mutex m_datalock;

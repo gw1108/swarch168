@@ -11,8 +11,8 @@ const int LogIn::SALTSIZE = 32;
 const int LogIn::KEYSIZE = 32;
 
 LogIn::LogIn(void)
+	:database(new Database())
 {
-	database = new Database();
 	//table will have 2 columns	UserName | Passwords
 	//table will be called Users
 }

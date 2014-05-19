@@ -4,6 +4,8 @@
 using namespace std;
 
 ServerEngine::ServerEngine(void)
+	:serverIsRunning(false),
+	networkController()
 {
 }
 
