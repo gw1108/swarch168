@@ -17,6 +17,9 @@ public:
 	void stopNetwork(void);
 	GameData getNextGameData(void);
 	bool isGameDataAvailible(void);
+
+	//static members
+	static const int CHECK_INTERVAL = 1500;
 private:
 	void run(void);
 	void newConnections(sf::TcpSocket*& player);

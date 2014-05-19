@@ -2,6 +2,7 @@
 #include "LogInData.h"
 #include <iostream>			//network controller debug
 #include <vector>
+#include <ctime>
 
 using namespace std;
 
@@ -45,11 +46,14 @@ void SNetworkController::run(void)
 	player->setBlocking(false);
 	while(serverRunning)
 	{
+		std::cout << "Beginning Server Loop " << std::endl;
 		//accept new connections
 		newConnections(player);
 
 		//update old connections
 		updateConnections();
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(CHECK_INTERVAL));
 	}
 	delete player;
 	std::cout << "stopped waiting for connections" << std::endl;
