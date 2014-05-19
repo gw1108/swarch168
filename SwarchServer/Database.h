@@ -6,12 +6,12 @@
 class Database
 {
 public:
-	Database(const char* filename = Database::DEFAULT_DATABASE_NAME.c_str());
+	Database(const std::string filename = Database::DEFAULT_DATABASE_NAME.c_str());
 	~Database(void);
 
 	static const std::string DEFAULT_DATABASE_NAME;
 
-	int open(const char* filename);
+	int open(const std::string filename);
 	std::vector<std::vector<std::string>> query(const std::string query);
 	void close();
 	std::vector<std::vector<std::string>> getUsersWhere(std::string usernameCondition);

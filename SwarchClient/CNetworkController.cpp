@@ -110,6 +110,7 @@ void CNetworkController::StopListeningThread(void)
 		m_connected = false;		// Set Thread-Loop conditional to false
 		m_listeningThread->join();	// Wait for thread to end
 		delete m_listeningThread;
+		m_listeningThread = nullptr;
 	}
 }
 

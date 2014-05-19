@@ -5,7 +5,7 @@ using namespace std;
 
 const std::string Database::DEFAULT_DATABASE_NAME = "Database.db";
 
-Database::Database(const char* filename)
+Database::Database(const std::string filename)
 	:db(nullptr)
 {
 	open(filename);
@@ -21,9 +21,9 @@ Database::~Database(void)
 {
 }
 
-int Database::open(const char* filename)
+int Database::open(const string filename)
 {
-	return sqlite3_open(filename, &db);
+	return sqlite3_open(filename.c_str(), &db);
 }
 
 //returns a vector<vector<string>> with each vector<string> being a row
