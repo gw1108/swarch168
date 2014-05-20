@@ -7,7 +7,7 @@
 #include <list>
 #include "SPlayer.h"
 #include "ServerData.h"
-#include "NewPlayer.h"
+#include "Player.h"
 
 class SNetworkController
 {
@@ -28,7 +28,7 @@ private:
 	int getNewClientNumber(void);
 	void freeClientNumber(int clientNumber);
 	void pushServerData(ServerData data);
-	void sendNewPlayer(NewPlayer newPlayer);
+	void sendNewPlayer(Player newPlayer);
 
 	LogIn* logInHandler;
 	std::thread* m_networkThread;

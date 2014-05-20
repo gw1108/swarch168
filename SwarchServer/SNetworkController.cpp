@@ -123,8 +123,8 @@ void SNetworkController::updateConnections(void)
 
 				if(responseCode == GameData::LoginResponse::ACCEPTED)
 				{
-					NewPlayer newPlayer(logInData.GetUsername(), (int)clientNumber);
-					sendNewPlayer(newPlayer);
+					//Player newPlayer(logInData.GetUsername(), (int)clientNumber);
+					//sendNewPlayer(newPlayer);
 				}
 
 				(*it).second.m_loggedIn = (responseCode == GameData::LoginResponse::ACCEPTED);
@@ -264,7 +264,7 @@ void SNetworkController::freeClientNumber(int clientNumber)
 	}
 }
 
-void SNetworkController::sendNewPlayer(NewPlayer newPlayer)
+void SNetworkController::sendNewPlayer(Player newPlayer)
 {
 	for(auto it = clients.begin(); it != clients.end(); ++it)
 	{

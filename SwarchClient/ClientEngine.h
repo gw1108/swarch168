@@ -14,6 +14,7 @@
 
 #include <SFML\System\Clock.hpp>
 #include <SFML\Graphics.hpp>
+#include "CNetworkController.h"
 #include "GamePiece.h"
 #include "GameData.h"
 #include "Pellet.h"
@@ -28,7 +29,8 @@ public:
 	// ============================================================================================
 
 	// Constructor/Destructor Prototypes
-	ClientEngine(sf::RenderWindow& mainWindow, const sf::Font& gameFont, int assignedPlayer, std::string userName);
+	ClientEngine(sf::RenderWindow& mainWindow, const sf::Font& gameFont, CNetworkController& networkControl,
+				 int assignedPlayer, std::string userName);
 	~ClientEngine(void);
 
 	// Prototypes
@@ -55,7 +57,12 @@ private:
 	// Class Data Members
 	// ============================================================================================
 
-	// Engine Related Members
+	// Window Members
+	sf::RenderWindow &m_mainWindow;
+	const sf::Font &m_gameFont;
+
+	// Engine Members
+	CNetworkController& m_networkControl;
 	sf::Clock m_engineClock;
 	bool m_running;
 	
@@ -75,10 +82,6 @@ private:
 
 	// Pellets
 	Pellet *m_pellets;
-
-	// Window Members
-	sf::RenderWindow &m_mainWindow;
-	const sf::Font &m_gameFont;
 };
 
 #endif

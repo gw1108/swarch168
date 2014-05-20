@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include "ClientEngine.h"
+#include "Player.h"
 
 // ===== Constructor ==============================================================================
 // The constructor will set-up the GUI and initialize all game values for the client. It will start
@@ -18,9 +19,11 @@
 // Input: none
 // Output: none
 //  ===============================================================================================
-ClientEngine::ClientEngine(sf::RenderWindow& mainWindow, const sf::Font& gameFont, int assignedPlayer, std::string userName) :
+ClientEngine::ClientEngine(sf::RenderWindow& mainWindow, const sf::Font& gameFont, CNetworkController& networkControl,
+						   int assignedPlayer, std::string userName) :
 	m_mainWindow(mainWindow),
 	m_gameFont(gameFont),
+	m_networkControl(networkControl),
 	m_engineClock(),
 	m_running(false),
 	m_gameData(),
@@ -78,6 +81,7 @@ ClientEngine::~ClientEngine(void)
 void ClientEngine::Run(void)
 {
 	GamePiece::Direction moveDirection = GamePiece::DOWN;
+	Player newPlayer;
 
 	m_running = true;
 
@@ -93,19 +97,22 @@ void ClientEngine::Run(void)
 		{
 			m_engineClock.restart();
 
-			/*
-			// Check for server update
-			if(m_networkControl->DataQueueEmpty())
+			// Check for Data Update
+			if(m_networkControl.GetNextData(m_gameData))
 			{
-				PredictOpponents();
-			}
-			else
-			{
-				m_gameData = m_networkControl->GetDataUpdate();
 				UpdatePellets();
 				UpdateOpponents();
 			}
-			*/
+			else
+			{
+				PredictOpponents();
+			}
+
+			// Check for New Player
+			if(m_networkControl.GetNewPlayer(newPlayer))
+			{
+				//if(newPlayer.GetAssignedNumber())
+			}
 
 			// Loop through events and assign proper values to moveDirection
 			sf::Event event;
