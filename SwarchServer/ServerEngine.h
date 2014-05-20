@@ -13,5 +13,8 @@ public:
 	void stop(void);
 private:
 	bool serverIsRunning;
+	std::vector<SPlayer> players;
+
 	SNetworkController networkController;
+	//vector of players
 };

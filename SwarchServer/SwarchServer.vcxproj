@@ -45,6 +45,7 @@
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(ProjectDir)..\Middleware\include;$(ProjectDir)..\SwarchLibrary;$(ProjectDir)..\Middleware\openssl-1.0.1g-bin\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SFML_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -75,6 +76,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\Jay%27s Realm\GameDev\swarch168\SwarchServer\SPlayer.h" />
     <ClInclude Include="Database.h" />
     <ClInclude Include="LogIn.h" />
     <ClInclude Include="ServerEngine.h" />
@@ -83,6 +85,7 @@
     <ClInclude Include="sqlite3ext.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\Jay%27s Realm\GameDev\swarch168\SwarchServer\SPlayer.cpp" />
     <ClCompile Include="Database.cpp" />
     <ClCompile Include="LogIn.cpp" />
     <ClCompile Include="ServerEngine.cpp" />

@@ -16,6 +16,8 @@ private:
 	void sha256(const char* inputString, char outputBuffer[65]);
 	
 	Database* database;
+
+	//static members
 	static const int SALTSIZE;
 	static const int KEYSIZE;
 };

@@ -28,7 +28,11 @@ public:
 
 	// Command Code Enum
 	enum LoginResponse {NEW_ACCOUNT, ACCEPTED, WRONG_PW};
+	//NEW_PLAYER : server - > client, recieve newplayer class on a new player joining game
+	//GAME_UPDATE : server - > client, recieve gameupdate class on updated game.
+	//PLAYER_UPDATE : client - > server, recieve direction at time
 	enum CommandCode {LOG_IN, INITIALIZE, GAME_UPDATE, PLAYER_UPDATE, NEW_PLAYER};
+	
 
 	// ============================================================================================
 	// Methods
@@ -52,6 +56,7 @@ public:
 	static const int BOARD_WIDTH;		// Width of the playable area
 	static const int PELLET_GROW_SIZE;	// The amount a players piece should grow when it eats a pellet 
 	static const int MAX_PELLETS;		// Max number of pellets allowed on board
+	static const int MAX_PLAYERS;		// Max number of players allowed in server
 
 	// Player One Data
 	float player1X;						// X-Coordinate of the player

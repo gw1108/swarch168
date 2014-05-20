@@ -4,6 +4,9 @@
 using namespace std;
 
 ServerEngine::ServerEngine(void)
+	:serverIsRunning(false),
+	players(),
+	networkController(players)
 {
 }
 
@@ -16,10 +19,9 @@ void ServerEngine::run(void)
 	cout << "starting to run" << endl;
 	serverIsRunning = true;
 	networkController.startNetwork();
-
 	while(serverIsRunning)
 	{
-		//update people
+		//play the game on server and update people
 	}
 	networkController.stopNetwork();
 	cout << "finished running" << endl;

@@ -5,31 +5,35 @@
 #include <thread>
 #include "LogIn.h"
 #include <list>
+#include "SPlayer.h"
 
 class SNetworkController
 {
 public:
-	SNetworkController(void);
+	SNetworkController(std::vector<SPlayer>& players);
 	~SNetworkController(void);
 	
 	void startNetwork(void);
 	void stopNetwork(void);
 	GameData getNextGameData(void);
 	bool isGameDataAvailible(void);
+
+	//static members
+	static const int CHECK_INTERVAL = 1500;
 private:
 	void run(void);
-	void newConnections(sf::TcpSocket* socket);
+	void newConnections(sf::TcpSocket*& player);
 	void updateConnections(void);
-	
-	//static members
-	static const float CHECK_FREQUENCY;
+	int getNewClientNumber(void);
+	void freeClientNumber(int clientNumber);
 
 	LogIn* logInHandler;
 	std::thread* m_networkThread;
 	bool serverRunning;
 	sf::TcpListener listener;
-	sf::SocketSelector selector;
-	std::list<sf::TcpSocket*> clients;
+	std::list<std::pair<sf::TcpSocket*, SPlayer>> clients;
 	std::vector<GameData> m_data;
 	std::mutex m_datalock;
+	int currentPlayerID;
+	std::vector<bool> availableSpots;
 };

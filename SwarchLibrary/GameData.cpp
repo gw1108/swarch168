@@ -18,6 +18,7 @@ const int GameData::BOARD_WIDTH = 800;
 const int GameData::BOARD_HEIGHT = 600;
 const int GameData::PELLET_GROW_SIZE = 4;
 const int GameData::MAX_PELLETS = 4;
+const int GameData::MAX_PLAYERS = 4;
 
 
 // ===== Default Constructor ======================================================================

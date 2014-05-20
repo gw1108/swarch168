@@ -18,6 +18,8 @@
 #include "ClientEngine.h"
 #include "MenuSystem.h"
 
+#include <iostream>
+
 int CALLBACK WinMain(_In_  HINSTANCE hInstance, _In_  HINSTANCE hPrevInstance, _In_  LPSTR lpCmdLine, _In_  int nCmdShow)
 {
 	// Initialize main window and game font
