@@ -23,6 +23,7 @@ Player::Player(void) :
 	m_username(),
 	m_playerNum(-1),
 	m_position(),
+	m_direction(GamePiece::UP),
 	m_active(false),
 	m_dead(true)
 {}
@@ -44,6 +45,7 @@ Player::Player(std::string userName, int playerNum, Position position, bool acti
 	m_username(userName),
 	m_playerNum(playerNum),
 	m_position(position),
+	m_direction(GamePiece::UP),
 	m_active(active),
 	m_dead(true)
 {}
@@ -63,6 +65,7 @@ void Player::CopyFrom(const Player &other)
 	m_playerNum = other.m_playerNum;
 	m_position.m_xCoordinate = other.m_position.m_xCoordinate;
 	m_position.m_yCoordinate = other.m_position.m_yCoordinate;
+	m_direction = other.m_direction;
 	m_active = other.m_active;
 	m_dead = other.m_dead;
 }
@@ -84,6 +87,7 @@ sf::Packet& operator<<(sf::Packet& packet, Player& data)
 			<< data.GetAssignedNumber()
 			<< data.GetPosition().m_xCoordinate
 			<< data.GetPosition().m_yCoordinate
+			<< data.GetDirection()
 			<< data.IsActive()
 			<< data.IsDead();
 
@@ -107,6 +111,7 @@ sf::Packet& operator>>(sf::Packet& packet, Player& data)
 	int playerNum;
 	int xCord;
 	int yCord;
+	int dir;
 	bool state;
 	bool dead;
 
@@ -114,11 +119,13 @@ sf::Packet& operator>>(sf::Packet& packet, Player& data)
 			>> playerNum
 			>> xCord
 			>> yCord
+			>> dir
 			>> state;
 
 	data.SetUsername(username);
 	data.SetPlayerNumber(playerNum);
 	data.SetPosition(xCord, yCord);
+	data.SetDirection((GamePiece::Direction)dir);
 	data.SetActive(state);
 	data.SetDead(dead);
 
