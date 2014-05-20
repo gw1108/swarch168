@@ -153,7 +153,7 @@ void CNetworkController::SocketListening(void)
 				NewPlayer newPlayer;
 				receivedPacket >> newPlayer;
 
-				m_playerLock.lock();		// Lock Data
+				m_playerLock.lock();	// Lock Data
 
 				m_newPlayerQueue.push_back(newPlayer);
 

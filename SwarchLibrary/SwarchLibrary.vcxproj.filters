@@ -30,7 +30,7 @@
     <ClCompile Include="LogInData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="NewPlayer.cpp">
+    <ClCompile Include="Player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -47,7 +47,10 @@
     <ClInclude Include="LogInData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="NewPlayer.h">
+    <ClInclude Include="Player.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Position.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

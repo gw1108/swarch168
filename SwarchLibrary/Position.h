@@ -1,21 +1,20 @@
 // ================================================================================================
-// Filename: "NewPlayer.h"
+// Filename: "Position.h"
 // ================================================================================================
 // Author: Travis Smith
-// Last Modified: May 13, 2014
+// Last Modified: May 20, 2014
 // ================================================================================================
 // Class Description:
 // 
-// The NewPlayer class will encapsulate the data used when a new player joins the game. The server 
-// will send this data to the clients and the clients will use it to update their game state.
+// The Position class will be used to represent a point on the game board. It will contain public
+// member and is intended to be used as a private member of another class.
 // ================================================================================================
 
 #pragma once
 
 #include <string>
-#include <SFML\Network\Packet.hpp>
 
-class NewPlayer
+class Position
 {
 public:
 
@@ -23,31 +22,16 @@ public:
 	// Methods
 	// ============================================================================================
 
-	// Constructor Prototype
-	NewPlayer(void);
-	NewPlayer(std::string userName, int playerNum);
-
-	// Prototypes
-	void Copy(const NewPlayer &other);
-
-	// Inlined Methods
-	std::string GetUsername(void) { return m_username; } 
-	int GetAssignedNumber(void) { return m_playerNum; } 
-	void SetUsername(std::string username) { m_username = username; }
-	void SetPlayerNumber(int playerNum) { m_playerNum = playerNum; }
-
-private:
+	// Constructor Inlines
+	Position(void) : m_xCoordinate(0), m_yCoordinate(0){}
+	Position(int xCord, int yCord) : m_xCoordinate(xCord), m_yCoordinate(yCord){}
 
 	// ============================================================================================
 	// Class Data Members
 	// ============================================================================================
 
-	std::string m_username;
-	int m_playerNum;
+	int m_xCoordinate;
+	int m_yCoordinate;
 
 };
-
-// Packet Overloads for LogInData
-sf::Packet& operator<<(sf::Packet& packet, NewPlayer& data);
-sf::Packet& operator>>(sf::Packet& packet, NewPlayer& data);
 

@@ -90,15 +90,16 @@
     <ClCompile Include="GameData.cpp" />
     <ClCompile Include="GamePiece.cpp" />
     <ClCompile Include="LogInData.cpp" />
-    <ClCompile Include="NewPlayer.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Pellet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameData.h" />
     <ClInclude Include="GamePiece.h" />
     <ClInclude Include="LogInData.h" />
-    <ClInclude Include="NewPlayer.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="Pellet.h" />
+    <ClInclude Include="Position.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
