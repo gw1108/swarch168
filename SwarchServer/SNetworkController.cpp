@@ -6,7 +6,7 @@
 
 using namespace std;
 
-SNetworkController::SNetworkController(std::vector<SPlayer>& players)
+SNetworkController::SNetworkController()
 	:logInHandler(new LogIn()),
 	m_networkThread(nullptr),
 	serverRunning(false),
@@ -46,14 +46,13 @@ void SNetworkController::run(void)
 	player->setBlocking(false);
 	while(serverRunning)
 	{
-		std::cout << "Beginning Server Loop " << std::endl;
 		//accept new connections
 		newConnections(player);
 
 		//update old connections
 		updateConnections();
 
-		std::this_thread::sleep_for(std::chrono::milliseconds(CHECK_INTERVAL));
+		std::this_thread::sleep_for(std::chrono::milliseconds(GameData::S_UPDATE_SPEED));
 	}
 	delete player;
 	std::cout << "stopped waiting for connections" << std::endl;
@@ -122,12 +121,33 @@ void SNetworkController::updateConnections(void)
 				cout << "Sending packet new player number is " << (int)clientNumber << endl;
 				std::cout << client.send(packet) << std::endl;
 
+				if(responseCode == GameData::LoginResponse::ACCEPTED)
+				{
+					//Player newPlayer(logInData.GetUsername(), (int)clientNumber);
+					//sendNewPlayer(newPlayer);
+				}
+
 				(*it).second.m_loggedIn = (responseCode == GameData::LoginResponse::ACCEPTED);
 				(*it).second.m_playerNumber = (int) clientNumber;
+				
+				//add new player to game data
+				if((*it).second.m_loggedIn)
+				{
+					ServerData data((*it).second.m_playerNumber, ServerData::LOG_IN);
+					pushServerData(data);
+				}
 			}
 			else if(commandCode == GameData::CommandCode::PLAYER_UPDATE)	//update the m_data queue
 			{
+				sf::Int32 timestamp;
+				sf::Uint8 sfDirection;
 
+				packet >> timestamp;
+				packet >> sfDirection;
+
+				ServerData serverData((*it).second.m_playerNumber, ServerData::PLAYER_UPDATE);
+				serverData.direction = sfDirection;
+				pushServerData(serverData);
 			}
 			else
 			{
@@ -138,7 +158,12 @@ void SNetworkController::updateConnections(void)
 		else if(socketStatus == sf::TcpSocket::Disconnected)
 		{
 			//remove
-			std::cout <<" remove the socket plz" << std::endl;
+			std::cout <<" remove the socket and player plz" << std::endl;
+			if((*it).second.m_loggedIn)
+			{
+				ServerData playerDisconnect((*it).second.m_playerNumber, ServerData::ServerCommands::LOG_OUT);
+				pushServerData(playerDisconnect);
+			}
 			client.disconnect();
 			delete (*it).first;
 			freeClientNumber((*it).second.m_playerNumber);
@@ -153,21 +178,45 @@ void SNetworkController::updateConnections(void)
 //	std::cout << "Iterated through all the clients." << std::endl;
 }
 
-GameData SNetworkController::getNextGameData(void)
+ServerData SNetworkController::getNextGameData(void)
 {
-	GameData data;
 	m_datalock.lock();
 
-	data = m_data.back();
+	ServerData data = m_data.back();
 	m_data.pop_back();
 
 	m_datalock.unlock();
 	return data;
 }
 
+void SNetworkController::pushServerData(ServerData data)
+{
+	m_datalock.lock();
+
+	m_data.push_back(data);
+
+	m_datalock.unlock();
+}
+
 bool SNetworkController::isGameDataAvailible(void)
 {
 	return m_data.size() != 0;
+}
+
+//sends data to all players
+void SNetworkController::sendGameUpdate(GameData data)
+{
+	for(auto it = clients.begin(); it != clients.end(); ++it)
+	{
+		if((*it).second.m_loggedIn)
+		{
+			sf::Packet packet;
+
+			sf::Uint8 code = GameData::GAME_UPDATE;
+			packet << data;
+			(*it).first->send(packet);
+		}
+	}
 }
 
 void SNetworkController::startNetwork(void)
@@ -212,5 +261,22 @@ void SNetworkController::freeClientNumber(int clientNumber)
 	else
 	{
 		availableSpots[clientNumber-1] = true;
+	}
+}
+
+void SNetworkController::sendNewPlayer(Player newPlayer)
+{
+	for(auto it = clients.begin(); it != clients.end(); ++it)
+	{
+		if((*it).second.m_loggedIn)
+		{
+			sf::Packet packet;
+
+			sf::Uint8 commandCode = GameData::NEW_PLAYER;
+
+			packet << newPlayer;
+
+			(*it).first->send(packet);
+		}
 	}
 }

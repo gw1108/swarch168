@@ -19,6 +19,7 @@ const int GameData::BOARD_HEIGHT = 600;
 const int GameData::PELLET_GROW_SIZE = 4;
 const int GameData::MAX_PELLETS = 4;
 const int GameData::MAX_PLAYERS = 4;
+const int GameData::S_UPDATE_SPEED = 1500;
 
 
 // ===== Default Constructor ======================================================================
@@ -46,6 +47,12 @@ GameData::GameData(void) :
 	player3Direction(GamePiece::DOWN), 	
 	player3Dead(false),
 	player3Score(0),
+
+	player4X(BOARD_WIDTH / 2),			
+	player4Y(BOARD_HEIGHT / 2),				
+	player4Direction(GamePiece::DOWN), 	
+	player4Dead(false),
+	player4Score(0),
 
 	pellet1X(0),
 	pellet1Y(0),
@@ -87,6 +94,12 @@ void GameData::Copy(const GameData &other)
 	player3Direction = other.player3Direction;
 	player3Dead = other.player3Dead;
 	player3Score = other.player3Score;
+
+	player4X = other.player4X;		
+	player4Y = other.player4Y;				
+	player4Direction = other.player4Direction;
+	player4Dead = other.player4Dead;
+	player4Score = other.player4Score;
 
 	pellet1X = other.pellet1X;
 	pellet1Y = other.pellet1Y;
@@ -130,6 +143,12 @@ sf::Packet& operator<<(sf::Packet& packet, GameData& gameData)
 		<< gameData.player3Direction 
 		<< gameData.player3Dead 
 		<< gameData.player3Score 
+
+		<< gameData.player4X 
+		<< gameData.player4Y 
+		<< gameData.player4Direction 
+		<< gameData.player4Dead 
+		<< gameData.player4Score 
 		
 		<< gameData.pellet1X 
 		<< gameData.pellet1Y 
@@ -175,6 +194,12 @@ sf::Packet& operator>>(sf::Packet& packet, GameData& gameData)
 		>> gameData.player3Direction 
 		>> gameData.player3Dead 
 		>> gameData.player3Score 
+
+		>> gameData.player4X 
+		>> gameData.player4Y 
+		>> gameData.player4Direction 
+		>> gameData.player4Dead 
+		>> gameData.player4Score 
 		
 		>> gameData.pellet1X 
 		>> gameData.pellet1Y 

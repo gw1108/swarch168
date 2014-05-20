@@ -35,7 +35,7 @@
 #include <SFML\System\Clock.hpp>
 #include "GameData.h"
 #include "GamePiece.h"
-#include "NewPlayer.h"
+#include "Player.h"
 
 class CNetworkController
 {
@@ -57,7 +57,7 @@ public:
 	void Disconnect(void);
 	void StopListeningThread(void);
 	bool GetNextData(GameData &dataRef);
-	bool GetNewPlayer(NewPlayer &dataRef);
+	bool GetNewPlayer(Player &dataRef);
 	void SendLogIn(std::string name, std::string pw);
 	void SendDirectionChange(GamePiece::Direction direction);
 
@@ -83,7 +83,7 @@ private:
 	std::mutex m_dataLock;
 
 	// NewPlayer Queue
-	std::list<NewPlayer> m_newPlayerQueue;
+	std::list<Player> m_newPlayerQueue;
 	std::mutex m_playerLock;
 
 	// Client Data

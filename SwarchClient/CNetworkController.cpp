@@ -150,7 +150,7 @@ void CNetworkController::SocketListening(void)
 			}
 			else if(cmdCode == GameData::NEW_PLAYER)
 			{
-				NewPlayer newPlayer;
+				Player newPlayer;
 				receivedPacket >> newPlayer;
 
 				m_playerLock.lock();	// Lock Data
@@ -226,14 +226,14 @@ bool CNetworkController::GetNextData(GameData &dataRef)
 // Output:
 //	[OUT] bool					-	true if updated, false otherwise
 // ================================================================================================
-bool CNetworkController::GetNewPlayer(NewPlayer &dataRef)
+bool CNetworkController::GetNewPlayer(Player &dataRef)
 {
 	if(!m_newPlayerQueue.empty())
 	{
 		m_playerLock.lock();		// Lock Data
 
-		NewPlayer data = m_newPlayerQueue.front();
-		dataRef.Copy(data);
+		Player data = m_newPlayerQueue.front();
+		dataRef.CopyFrom(data);
 		m_newPlayerQueue.pop_front();
 
 		m_playerLock.unlock();	// Unlock Data
@@ -289,5 +289,3 @@ void CNetworkController::SendDirectionChange(GamePiece::Direction direction)
 
 	m_serverConnection.send(dataPacket);
 }
-
-

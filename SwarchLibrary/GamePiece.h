@@ -22,6 +22,8 @@ class GamePiece: public sf::RectangleShape
 
 public:
 
+	enum Direction {UP, DOWN, LEFT, RIGHT};
+
 	// ============================================================================================
 	// Methods
 	// ============================================================================================
@@ -31,7 +33,8 @@ public:
 
 	// Method Prototypes
 	void ReSpawn(void);
-	void TakeTurn(int direction);
+	void TakeTurn(void);
+	void TakeTurn(Direction direction);
 	void Grow(void);
 	void Grow(int opponentSize);
 	void ResetSize(void);
@@ -39,12 +42,13 @@ public:
 	// Inlined Methods
 	float GetDimension(void){ return m_currentDimension; }
 	float GetMoveRate(void){ return m_moveRate; }
+	int getPlayerID(void) const { return m_playerID; }
 
+	
 	// ============================================================================================
 	// Class Data Members
 	// ============================================================================================
-
-	enum Direction {UP, DOWN, LEFT, RIGHT};
+	Direction m_direction;
 
 	// Constants
 	static const float START_DIMENSION;
@@ -52,6 +56,7 @@ public:
 	static const sf::Color PLAYER1_COLOR;
 	static const sf::Color PLAYER2_COLOR;
 	static const sf::Color PLAYER3_COLOR;
+	static const sf::Color PLAYER4_COLOR;
 
 private:
 
@@ -61,6 +66,7 @@ private:
 	// Members
 	float m_currentDimension;	
 	float m_moveRate;
+	int m_playerID;
 };
 
 #endif

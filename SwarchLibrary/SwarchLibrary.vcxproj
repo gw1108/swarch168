@@ -87,6 +87,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\Jay%27s Realm\GameDev\swarch168\SwarchLibrary\ServerData.cpp" />
     <ClCompile Include="GameData.cpp" />
     <ClCompile Include="GamePiece.cpp" />
     <ClCompile Include="LogInData.cpp" />
@@ -94,6 +95,7 @@
     <ClCompile Include="Pellet.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\Jay%27s Realm\GameDev\swarch168\SwarchLibrary\ServerData.h" />
     <ClInclude Include="GameData.h" />
     <ClInclude Include="GamePiece.h" />
     <ClInclude Include="LogInData.h" />

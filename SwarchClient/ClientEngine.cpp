@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include "ClientEngine.h"
+#include "Player.h"
 
 // ===== Constructor ==============================================================================
 // The constructor will set-up the GUI and initialize all game values for the client. It will start
@@ -79,8 +80,8 @@ ClientEngine::~ClientEngine(void)
 // ================================================================================================
 void ClientEngine::Run(void)
 {
-	int moveDirection = GamePiece::DOWN;
-	NewPlayer newPlayer;
+	GamePiece::Direction moveDirection = GamePiece::DOWN;
+	Player newPlayer;
 
 	m_running = true;
 
@@ -110,7 +111,7 @@ void ClientEngine::Run(void)
 			// Check for New Player
 			if(m_networkControl.GetNewPlayer(newPlayer))
 			{
-				if(newPlayer.GetAssignedNumber
+				//if(newPlayer.GetAssignedNumber())
 			}
 
 			// Loop through events and assign proper values to moveDirection
