@@ -57,6 +57,7 @@ public:
 	static const int PELLET_GROW_SIZE;	// The amount a players piece should grow when it eats a pellet 
 	static const int MAX_PELLETS;		// Max number of pellets allowed on board
 	static const int MAX_PLAYERS;		// Max number of players allowed in server
+	static const int S_UPDATE_SPEED;	// Determines the speed in milliseconds of the network thread and engine thread
 
 	// Player One Data
 	float player1X;						// X-Coordinate of the player
@@ -78,6 +79,13 @@ public:
 	int player3Direction;				// Direction of movement
 	bool player3Dead;					// True if the player is dead
 	int player3Score;	
+
+	// Player Four Data
+	float player4X;						// X-Coordinate of the player
+	float player4Y;						// Y-Coordinate of the player
+	int player4Direction;				// Direction of movement
+	bool player4Dead;					// True if the player is dead
+	int player4Score;	
 
 	// Pellet Data
 	float pellet1X;

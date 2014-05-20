@@ -17,6 +17,7 @@ const float GamePiece::BASE_MOVE_RATE = 3;
 const sf::Color GamePiece::PLAYER1_COLOR = sf::Color(0, 100, 255);	// Blue
 const sf::Color GamePiece::PLAYER2_COLOR = sf::Color(255, 0, 0);	// Red
 const sf::Color GamePiece::PLAYER3_COLOR = sf::Color(0, 255, 0);	// Green
+const sf::Color GamePiece::PLAYER4_COLOR = sf::Color::Yellow;		// Yellow
 
 // ===== Constructor ==============================================================================
 // The constructor will use class constants to define the size of the sf::RectangleShape parent.
@@ -28,7 +29,7 @@ const sf::Color GamePiece::PLAYER3_COLOR = sf::Color(0, 255, 0);	// Green
 //
 // Output: none
 //  ===============================================================================================
-GamePiece::GamePiece(int player) : m_currentDimension(START_DIMENSION), m_moveRate(BASE_MOVE_RATE)
+GamePiece::GamePiece(int player) : m_currentDimension(START_DIMENSION), m_moveRate(BASE_MOVE_RATE), m_direction(Direction::DOWN), m_playerID(player)
 {
 	setSize(sf::Vector2f(START_DIMENSION, START_DIMENSION));
 	setOrigin(sf::Vector2f((START_DIMENSION / 2), (START_DIMENSION / 2)));
@@ -48,9 +49,14 @@ GamePiece::GamePiece(int player) : m_currentDimension(START_DIMENSION), m_moveRa
 		setFillColor(PLAYER3_COLOR);
 		setPosition((float)(GameData::BOARD_WIDTH / 2), (float)(GameData::BOARD_HEIGHT / 2));
 	}
+	else if(player == 4)
+	{
+		setFillColor(PLAYER4_COLOR);
+		setPosition((float)(GameData::BOARD_WIDTH / 2), (float)(GameData::BOARD_HEIGHT / 2));
+	}
 	else
 	{
-		// Invalid Player Input
+		//invalid input
 	}
 }
 
@@ -107,8 +113,9 @@ void GamePiece::ReSpawn(void)
 //
 // Output: none
 // ================================================================================================
-void GamePiece::TakeTurn(int direction)
+void GamePiece::TakeTurn(Direction direction)
 {
+	m_direction = direction;
 	if(direction == UP)
 	{
 		move(0, ((-1) * m_moveRate)); 
@@ -129,6 +136,11 @@ void GamePiece::TakeTurn(int direction)
 	{
 		// Invalid direction passed
 	}
+}
+
+void GamePiece::TakeTurn(void)
+{
+	TakeTurn(m_direction);
 }
 
 // ===== Grow(pellet)==============================================================================

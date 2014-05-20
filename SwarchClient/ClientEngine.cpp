@@ -77,7 +77,7 @@ ClientEngine::~ClientEngine(void)
 // ================================================================================================
 void ClientEngine::Run(void)
 {
-	int moveDirection = GamePiece::DOWN;
+	GamePiece::Direction moveDirection = GamePiece::DOWN;
 
 	m_running = true;
 
