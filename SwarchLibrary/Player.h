@@ -33,10 +33,9 @@ public:
 	void TakeTurn(void);
 	void TakeTurn(GamePiece::Direction direction);
 	void Grow(void);
-	void Grow(int opponentSize);
+	void Grow(float opponentSize);
 	void ResetSize(void);
 	sf::Rect<float> GetRectangle(void);
-
 
 	// Inlined Methods
 	std::string GetUsername(void) { return m_username; } 
@@ -50,11 +49,11 @@ public:
 	void SetUsername(std::string username) { m_username = username; }
 	void SetPlayerNumber(int playerNum) { m_playerNum = playerNum; }
 	void SetPosition(sf::Vector2f newPosition) { m_position = newPosition; }
-	void SetPosition(int xCord, int yCord) { m_position.x = xCord; m_position.y = yCord; }
+	void SetPosition(float xCord, float yCord) { m_position.x = xCord; m_position.y = yCord; }
 	void SetDirection(GamePiece::Direction direction) { m_direction = direction; }
 	void SetActive(bool state) { m_active = state; }
 	void SetDead(bool state) { m_dead = state; }
-	void SetMoveRate(int rate) { m_moveRate = rate; }
+	void SetMoveRate(float rate) { m_moveRate = rate; }
 	void SetDimension(int dime) { m_currentDimension = dime; }
 
 private:

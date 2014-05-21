@@ -16,7 +16,7 @@ const int GameData::SERVER_PORT = 30000;
 const int GameData::ENGINE_SPEED = 17;
 const int GameData::BOARD_WIDTH = 800;
 const int GameData::BOARD_HEIGHT = 600;
-const int GameData::PELLET_GROW_SIZE = 4;
+const float GameData::PELLET_GROW_SIZE = 4;
 const int GameData::S_UPDATE_SPEED = 100;
 
 

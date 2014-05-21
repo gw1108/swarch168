@@ -137,10 +137,10 @@ void ServerEngine::CheckWallCollisions(Player& playerPiece)
 	sf::Vector2f playerPos = playerPiece.GetPosition();
 	float playerDim = playerPiece.GetDimension();
 
-	if(((playerPos.x + (playerDim / 2)) >= GameData::BOARD_WIDTH) ||
-		((playerPos.x - (playerDim / 2)) <= 0)	||
-		((playerPos.y + (playerDim / 2)) >= GameData::BOARD_HEIGHT) || 
-		((playerPos.y - (playerDim / 2)) <= 0))
+	if(((playerPos.x + playerDim) >= GameData::BOARD_WIDTH) ||
+		(playerPos.x <= 0)	||
+		((playerPos.y + playerDim) >= GameData::BOARD_HEIGHT) || 
+		(playerPos.y <= 0))
 	{
 		cout << "Player " << playerPiece.GetAssignedNumber() << " has foolishly hit a wall and died " << endl;
 		playerPiece.ReSpawn();

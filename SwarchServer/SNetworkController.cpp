@@ -127,7 +127,8 @@ void SNetworkController::updateConnections(void)
 					//sendNewPlayer(newPlayer);
 				}
 
-				(*it).second.m_loggedIn = (responseCode == GameData::LoginResponse::ACCEPTED);
+				(*it).second.m_loggedIn = ((responseCode == GameData::LoginResponse::ACCEPTED) ||
+										   (responseCode == GameData::LoginResponse::NEW_ACCOUNT));
 				(*it).second.m_playerNumber = (int) clientNumber;
 				
 				//add new player to game data

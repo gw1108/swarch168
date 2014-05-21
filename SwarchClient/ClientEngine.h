@@ -47,8 +47,9 @@ private:
 
 	// Prototypes
 	void UpdatePellets(void);
-	void UpdateOpponents(bool reset);
+	void UpdateGamePieces(bool reset);
 	void PredictOpponents(void);
+	void SetUpTextFields(void);
 	void Render(void);
 
 	// ============================================================================================
@@ -65,7 +66,7 @@ private:
 	bool m_running;
 	
 	// User Data
-	sf::Text m_userName;
+	sf::Text m_userNames[GameData::MAX_PLAYERS];
 
 	// Most Recent Data
 	GameData m_gameData;

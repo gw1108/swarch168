@@ -56,7 +56,7 @@ public:
 	static const int ENGINE_SPEED;		// The Loop Conditional to control the engine cycle rate of clients and server
 	static const int BOARD_HEIGHT;		// Height of the playable area
 	static const int BOARD_WIDTH;		// Width of the playable area
-	static const int PELLET_GROW_SIZE;	// The amount a players piece should grow when it eats a pellet 
+	static const float PELLET_GROW_SIZE;	// The amount a players piece should grow when it eats a pellet 
 	static const int MAX_PELLETS = 4;	// Max number of pellets allowed on board
 	static const int MAX_PLAYERS = 4;	// Max number of players allowed in server
 	static const int S_UPDATE_SPEED;	// Determines the speed in milliseconds of the network thread

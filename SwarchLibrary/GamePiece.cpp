@@ -36,7 +36,6 @@ GamePiece::GamePiece(void) :
 	m_playerID(0)
 {
 	setSize(sf::Vector2f(START_DIMENSION, START_DIMENSION));
-	setOrigin(sf::Vector2f((START_DIMENSION / 2), (START_DIMENSION / 2)));
 	setFillColor(sf::Color::White);
 }
 
@@ -57,7 +56,6 @@ GamePiece::GamePiece(int player) :
 	m_playerID(player)
 {
 	setSize(sf::Vector2f(START_DIMENSION, START_DIMENSION));
-	setOrigin(sf::Vector2f((START_DIMENSION / 2), (START_DIMENSION / 2)));
 	setFillColor(sf::Color::White);
 }
 
@@ -184,7 +182,6 @@ void GamePiece::Grow(void)
 	m_currentDimension += GameData::PELLET_GROW_SIZE;
 
 	setSize(sf::Vector2f(m_currentDimension, m_currentDimension));
-	setOrigin(sf::Vector2f((m_currentDimension / 2), (m_currentDimension / 2)));
 
 	CalculateSpeed();
 }
@@ -203,7 +200,6 @@ void GamePiece::Grow(int opponentSize)
 	m_currentDimension += opponentSize;
 
 	setSize(sf::Vector2f(m_currentDimension, m_currentDimension));
-	setOrigin(sf::Vector2f((m_currentDimension / 2), (m_currentDimension / 2)));
 
 	CalculateSpeed();
 }
@@ -220,7 +216,6 @@ void GamePiece::ResetSize(void)
 	m_currentDimension = START_DIMENSION;
 
 	setSize(sf::Vector2f(m_currentDimension, m_currentDimension));
-	setOrigin(sf::Vector2f((m_currentDimension / 2), (m_currentDimension / 2)));
 
 	CalculateSpeed();
 }

@@ -100,22 +100,22 @@ void Player::ReSpawn(void)
 
 	xCoord = (float)((rand() % (GameData::BOARD_WIDTH)));	
 
-	if(xCoord <= 10)
+	if(xCoord <= 10 + Player::START_DIMENSION)
 	{
 		xCoord = 10;
 	}
-	else if(xCoord >= (GameData::BOARD_WIDTH - 10))
+	else if(xCoord >= (GameData::BOARD_WIDTH - 10 - Player::START_DIMENSION))
 	{
 		xCoord = (GameData::BOARD_WIDTH - 10.f);
 	}
 
 	yCoord = (float)((rand() % (GameData::BOARD_HEIGHT)));	
 
-	if(yCoord <= 10)
+	if(yCoord <= 10 + Player::START_DIMENSION)
 	{
 		yCoord = 10;
 	}
-	else if(yCoord >= (GameData::BOARD_HEIGHT - 10))
+	else if(yCoord >= (GameData::BOARD_HEIGHT - 10 - Player::START_DIMENSION))
 	{
 		yCoord = (GameData::BOARD_HEIGHT - 10.f);
 	}
@@ -189,7 +189,7 @@ void Player::Grow(void)
 //
 // Output: none
 // ================================================================================================
-void Player::Grow(int opponentSize)
+void Player::Grow(float opponentSize)
 {
 	m_currentDimension += opponentSize;
 

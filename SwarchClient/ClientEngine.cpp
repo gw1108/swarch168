@@ -26,22 +26,22 @@ ClientEngine::ClientEngine(sf::RenderWindow& mainWindow, const sf::Font& gameFon
 	m_networkControl(networkControl),
 	m_engineClock(),
 	m_running(false),
+	m_userNames(),
 	m_gameData(),
 	m_playerPieces(),
 	m_playerNum(assignedPlayer)
 {
-
+	// Set up the Players
 	for(int index = 0; index < GameData::MAX_PLAYERS; index++)
 	{
 		m_playerPieces[index].SetPlayerNumber(index);
 	}
 
+	SetUpTextFields();
+
 	m_assignedPiece = &(m_playerPieces[assignedPlayer]);
 
 	m_engineClock.restart();
-
-	//set the username display
-	m_userName = sf::Text(userName, m_gameFont, 30);
 }
 
 // ===== Destructor ===============================================================================
@@ -81,7 +81,7 @@ void ClientEngine::Run(void)
 			// Check for Data Update
 			if(m_networkControl.GetNextData(m_gameData))
 			{
-				UpdateOpponents(m_gameData.reset);
+				UpdateGamePieces(m_gameData.reset);
 			}
 			else
 			{
@@ -138,7 +138,7 @@ void ClientEngine::UpdatePellets()
 {
 }
 
-// ===== UpdateOpponents ==========================================================================
+// ===== UpdateGamePieces =========================================================================
 // This method updates the opponents positions. It will interpolate between the currently predicted
 // positions and the updated ones received from the server. This method should be called whenever
 // new data is received from the server.
@@ -148,7 +148,7 @@ void ClientEngine::UpdatePellets()
 //
 // Output: none
 // ================================================================================================
-void ClientEngine::UpdateOpponents(bool reset)
+void ClientEngine::UpdateGamePieces(bool reset)
 {
 	int index = 0;
 
@@ -162,10 +162,9 @@ void ClientEngine::UpdateOpponents(bool reset)
 			m_playerPieces[index].setSize(sf::Vector2f(m_gameData.m_players[index].GetDimension(),
 													   m_gameData.m_players[index].GetDimension()));
 
-			m_playerPieces[index].setOrigin(sf::Vector2f((m_gameData.m_players[index].GetDimension() / 2),
-														 (m_gameData.m_players[index].GetDimension() / 2)));
-
 			m_playerPieces[index].setPosition(m_gameData.m_players[index].GetPosition());
+
+			m_userNames[index].setString( m_gameData.m_players[index].GetUsername());
 		}
 	}
 }
@@ -186,6 +185,45 @@ void ClientEngine::PredictOpponents()
 	{
 		m_gameData.m_players[index].TakeTurn();
 		m_playerPieces[index].setPosition(m_gameData.m_players[index].GetPosition());
+	}
+}
+
+// ===== SetUpTextFields ==========================================================================
+// Used to set the position of the text fields for name display.
+//
+// Input: none
+// Output: none
+// ================================================================================================
+void ClientEngine::SetUpTextFields(void)
+{
+	float topBuffer = 0;
+	float horizBuffer = 15;
+	float bottomBuffer = 40;
+
+	for(int index = 0; index < GameData::MAX_PLAYERS; index++)
+	{
+		m_userNames[index] = sf::Text(m_gameData.m_players[index].GetUsername(), m_gameFont, 30);
+
+		if(index == 0)
+		{
+			m_userNames[index].setPosition(horizBuffer, topBuffer);
+			m_userNames[index].setColor(GamePiece::PLAYER0_COLOR);
+		}
+		else if(index == 1)
+		{
+			m_userNames[index].setPosition((GameData::BOARD_WIDTH / 2), topBuffer);
+			m_userNames[index].setColor(GamePiece::PLAYER1_COLOR);
+		}
+		else if(index == 2)
+		{
+			m_userNames[index].setPosition(horizBuffer, (GameData::BOARD_HEIGHT - bottomBuffer));
+			m_userNames[index].setColor(GamePiece::PLAYER2_COLOR);
+		}
+		else if(index == 3)
+		{
+			m_userNames[index].setPosition((GameData::BOARD_WIDTH / 2), (GameData::BOARD_HEIGHT - bottomBuffer));
+			m_userNames[index].setColor(GamePiece::PLAYER3_COLOR);
+		}
 	}
 }
 
@@ -210,17 +248,20 @@ void ClientEngine::Render(void)
 		m_mainWindow.draw(m_gameData.m_pellets[index]);
 	}
 
-	// Draw Pieces
+	// Draw Pieces and Names
 	for(index = 0; index < GameData::MAX_PLAYERS; index++)
 	{
-		if((m_gameData.m_players[index].IsActive()) && !(m_gameData.m_players[index].IsDead()))
+		if(m_gameData.m_players[index].IsActive())
 		{
-			m_mainWindow.draw(m_playerPieces[index]);
+			m_mainWindow.draw(m_userNames[index]);
+
+			if(!(m_gameData.m_players[index].IsDead()))
+			{
+				m_mainWindow.draw(m_playerPieces[index]);
+			}
+			
 		}
 	}
-
-	// Draw Player User Name
-	m_mainWindow.draw(m_userName);
 
 	// Display Screen
 	m_mainWindow.display();
