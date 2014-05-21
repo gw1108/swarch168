@@ -15,6 +15,7 @@
 
 #include <SFML\Graphics\RectangleShape.hpp>
 #include <SFML\Graphics\Color.hpp>
+#include <SFML\Network\Packet.hpp>
 
 class Pellet: public sf::RectangleShape
 {
@@ -39,5 +40,9 @@ public:
 	static const float DIMENSION;
 	static const sf::Color COLOR;
 };
+
+// Packet Overloads for GameData
+sf::Packet& operator<<(sf::Packet& packet, Pellet& pellet);
+sf::Packet& operator>>(sf::Packet& packet, Pellet& pellet);
 
 #endif

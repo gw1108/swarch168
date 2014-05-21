@@ -47,10 +47,8 @@ private:
 
 	// Prototypes
 	void UpdatePellets(void);
-	void UpdateOpponents(void);
+	void UpdateOpponents(bool reset);
 	void PredictOpponents(void);
-	void CheckPelletCollisions(void);
-	void CheckWallCollisions(void);
 	void Render(void);
 
 	// ============================================================================================
@@ -73,15 +71,9 @@ private:
 	GameData m_gameData;
 
 	// Game Pieces
-	int m_numPlayers;
-	int m_assignedPlayer;
+	int m_playerNum;
 	GamePiece *m_assignedPiece;
-	GamePiece m_player1;
-	GamePiece m_player2;
-	GamePiece m_player3;
-
-	// Pellets
-	Pellet *m_pellets;
+	GamePiece m_playerPieces[GameData::MAX_PLAYERS];
 };
 
 #endif

@@ -13,6 +13,7 @@ public:
 	int m_playerNumber;
 	ServerCommands m_command;
 	int direction;
+	std::string m_playerName;
 
 	//login means new player
 

@@ -13,7 +13,6 @@
 
 #include <string>
 #include <SFML\Network\Packet.hpp>
-#include "Position.h"
 #include "GamePiece.h"
 
 class Player
@@ -26,25 +25,37 @@ public:
 
 	// Constructor Prototype
 	Player(void);
-	Player(std::string userName, int playerNum, Position position, bool active);
+	Player(std::string userName, int playerNum, sf::Vector2f position, bool active);
 
 	// Prototypes
 	void CopyFrom(const Player &other);
+	void ReSpawn(void);
+	void TakeTurn(void);
+	void TakeTurn(GamePiece::Direction direction);
+	void Grow(void);
+	void Grow(int opponentSize);
+	void ResetSize(void);
+	sf::Rect<float> GetRectangle(void);
+
 
 	// Inlined Methods
 	std::string GetUsername(void) { return m_username; } 
 	int GetAssignedNumber(void) { return m_playerNum; } 
-	Position GetPosition(void) { return m_position; }
+	sf::Vector2f GetPosition(void) { return m_position; }
 	GamePiece::Direction GetDirection(void) { return m_direction; }
 	bool IsActive(void) {  return m_active; }
 	bool IsDead(void) { return m_dead; }
+	float GetMoveRate(void) { return m_moveRate; }
+	float GetDimension(void) { return m_currentDimension; }
 	void SetUsername(std::string username) { m_username = username; }
 	void SetPlayerNumber(int playerNum) { m_playerNum = playerNum; }
-	void SetPosition(Position newPosition) { m_position = newPosition; }
+	void SetPosition(sf::Vector2f newPosition) { m_position = newPosition; }
+	void SetPosition(int xCord, int yCord) { m_position.x = xCord; m_position.y = yCord; }
 	void SetDirection(GamePiece::Direction direction) { m_direction = direction; }
-	void SetPosition(int xCord, int yCord) { m_position.m_xCoordinate = xCord; m_position.m_yCoordinate = yCord; }
 	void SetActive(bool state) { m_active = state; }
 	void SetDead(bool state) { m_dead = state; }
+	void SetMoveRate(int rate) { m_moveRate = rate; }
+	void SetDimension(int dime) { m_currentDimension = dime; }
 
 private:
 
@@ -52,12 +63,21 @@ private:
 	// Class Data Members
 	// ============================================================================================
 
+	// Prototypes
+	void CalculateSpeed(void);
+	
+	// Constants
+	static const float START_DIMENSION;
+	static const float BASE_MOVE_RATE;
+
 	std::string m_username;
 	int m_playerNum;
-	Position m_position;
+	sf::Vector2f m_position;
 	GamePiece::Direction m_direction;
 	bool m_active;
 	bool m_dead;
+	float m_currentDimension;	
+	float m_moveRate;
 
 };
 

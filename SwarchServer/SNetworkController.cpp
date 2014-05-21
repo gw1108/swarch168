@@ -134,6 +134,7 @@ void SNetworkController::updateConnections(void)
 				if((*it).second.m_loggedIn)
 				{
 					ServerData data((*it).second.m_playerNumber, ServerData::LOG_IN);
+					data.m_playerName = logInData.GetUsername();
 					pushServerData(data);
 				}
 			}
@@ -213,7 +214,7 @@ void SNetworkController::sendGameUpdate(GameData data)
 			sf::Packet packet;
 
 			sf::Uint8 code = GameData::GAME_UPDATE;
-			packet << data;
+			packet << code << data;
 			(*it).first->send(packet);
 		}
 	}
@@ -246,7 +247,7 @@ int SNetworkController::getNewClientNumber()
 		if(availableSpots[i])
 		{
 			availableSpots[i] = false;
-			return i + 1;
+			return i;
 		}
 	}
 	return 0;
@@ -260,7 +261,7 @@ void SNetworkController::freeClientNumber(int clientNumber)
 	}
 	else
 	{
-		availableSpots[clientNumber-1] = true;
+		availableSpots[clientNumber] = true;
 	}
 }
 

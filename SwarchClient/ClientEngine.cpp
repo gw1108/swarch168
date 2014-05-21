@@ -27,36 +27,18 @@ ClientEngine::ClientEngine(sf::RenderWindow& mainWindow, const sf::Font& gameFon
 	m_engineClock(),
 	m_running(false),
 	m_gameData(),
-	m_numPlayers(1),
-	m_assignedPlayer(assignedPlayer),
-	m_assignedPiece(NULL),
-	m_player1(1),
-	m_player2(2),
-	m_player3(3),
-	m_pellets(NULL)
+	m_playerPieces(),
+	m_playerNum(assignedPlayer)
 {
-	// Point assigned piece to correct player piece
-	if(m_assignedPlayer == 1)
+
+	for(int index = 0; index < GameData::MAX_PLAYERS; index++)
 	{
-		m_assignedPiece = &m_player1;
+		m_playerPieces[index].SetPlayerNumber(index);
 	}
-	else if(m_assignedPlayer == 2)
-	{
-		m_assignedPiece = &m_player2;
-	}
-	else if(m_assignedPlayer == 3)
-	{
-		m_assignedPiece = &m_player3;
-	}
-	else
-	{
-		// Assigned Player Invalid
-	}
+
+	m_assignedPiece = &(m_playerPieces[assignedPlayer]);
 
 	m_engineClock.restart();
-
-	// Initialize Pellet Array
-	m_pellets = new Pellet[GameData::MAX_PELLETS];
 
 	//set the username display
 	m_userName = sf::Text(userName, m_gameFont, 30);
@@ -66,9 +48,7 @@ ClientEngine::ClientEngine(sf::RenderWindow& mainWindow, const sf::Font& gameFon
 // The destructor will ensure all dynamically allocated memory is released.
 // ================================================================================================
 ClientEngine::~ClientEngine(void)
-{
-	delete[] m_pellets;
-}
+{}
 
 // ===== Run ======================================================================================
 // This method will be the "infinite" loop that starts when the engine starts. Every iteration it
@@ -80,6 +60,7 @@ ClientEngine::~ClientEngine(void)
 // ================================================================================================
 void ClientEngine::Run(void)
 {
+	GamePiece::Direction newDirection = GamePiece::DOWN;
 	GamePiece::Direction moveDirection = GamePiece::DOWN;
 	Player newPlayer;
 
@@ -100,18 +81,11 @@ void ClientEngine::Run(void)
 			// Check for Data Update
 			if(m_networkControl.GetNextData(m_gameData))
 			{
-				UpdatePellets();
-				UpdateOpponents();
+				UpdateOpponents(m_gameData.reset);
 			}
 			else
 			{
 				PredictOpponents();
-			}
-
-			// Check for New Player
-			if(m_networkControl.GetNewPlayer(newPlayer))
-			{
-				//if(newPlayer.GetAssignedNumber())
 			}
 
 			// Loop through events and assign proper values to moveDirection
@@ -124,35 +98,31 @@ void ClientEngine::Run(void)
 				}
 				else if((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::W))
 				{
-					moveDirection = GamePiece::UP;
+					newDirection = GamePiece::UP;
 				}
 				else if((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::S))
 				{
-					moveDirection = GamePiece::DOWN;
+					newDirection = GamePiece::DOWN;
 				}
 				else if((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::A))
 				{
-					moveDirection = GamePiece::LEFT;
+					newDirection = GamePiece::LEFT;
 				}
 				else if((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::D))
 				{
-					moveDirection = GamePiece::RIGHT;
+					newDirection = GamePiece::RIGHT;
 				}
 			} 
 
-			// Move Assigned Piece
-			m_assignedPiece->TakeTurn(moveDirection);
-
-			// Check for Pellet collisions, move this to server for MP version
-			CheckPelletCollisions();
-
-			// Check for Out of Bounds
-			CheckWallCollisions();
+			if(newDirection != moveDirection)
+			{
+				// Send Move Command
+				m_networkControl.SendDirectionChange(newDirection);
+				moveDirection = newDirection;
+			}
 
 			// Render The Game Screen
 			Render();
-
-			// Send update to server
 		}
 	}
 }
@@ -173,11 +143,31 @@ void ClientEngine::UpdatePellets()
 // positions and the updated ones received from the server. This method should be called whenever
 // new data is received from the server.
 //
-// Input: none
+// Input:
+//	[IN]	bool reset	-	if the players need to be interpolated or not
+//
 // Output: none
 // ================================================================================================
-void ClientEngine::UpdateOpponents()
+void ClientEngine::UpdateOpponents(bool reset)
 {
+	int index = 0;
+
+	// Remove When interpolation is complete
+	reset = true;
+
+	if(reset)
+	{
+		for(index = 0; index < GameData::MAX_PLAYERS; index++)
+		{
+			m_playerPieces[index].setSize(sf::Vector2f(m_gameData.m_players[index].GetDimension(),
+													   m_gameData.m_players[index].GetDimension()));
+
+			m_playerPieces[index].setOrigin(sf::Vector2f((m_gameData.m_players[index].GetDimension() / 2),
+														 (m_gameData.m_players[index].GetDimension() / 2)));
+
+			m_playerPieces[index].setPosition(m_gameData.m_players[index].GetPosition());
+		}
+	}
 }
 
 // ===== PredictOpponents =========================================================================
@@ -190,52 +180,12 @@ void ClientEngine::UpdateOpponents()
 // ================================================================================================
 void ClientEngine::PredictOpponents()
 {
-}
+	int index = 0;
 
-// ===== CheckPelletCollisions ====================================================================
-// Method will check if the assigned players piece has collided with any of the pellets. This
-// method will be moved to the server and updated for multiple players once the MP version of the
-// game is written.
-//
-// Input: none
-// Output: none
-// ================================================================================================
-void ClientEngine::CheckPelletCollisions()
-{
-	sf::FloatRect playerBounds = m_assignedPiece->getGlobalBounds();
-	sf::FloatRect pelletBounds;
-
-	for(int pIndex = 0; pIndex < GameData::MAX_PELLETS; pIndex++)
+	for(index = 0; index < GameData::MAX_PLAYERS; index++)
 	{
-		pelletBounds = m_pellets[pIndex].getGlobalBounds();
-
-		if(playerBounds.intersects(pelletBounds))
-		{
-			m_assignedPiece->Grow();
-			m_pellets[pIndex].Spawn();
-		}
-	}
-}
-
-// ===== CheckWallCollisions ======================================================================
-// Method will check if the assigned players piece has collided with any of the walls. If a the 
-// player has collided, it will reset the piece and assign it a random position. This method will 
-// be moved to the server and updated for multiple players once the MP version of the game is written.
-//
-// Input: none
-// Output: none
-// ================================================================================================
-void ClientEngine::CheckWallCollisions()
-{
-	sf::Vector2f playerPos = m_assignedPiece->getPosition();
-	float playerDim = m_assignedPiece->GetDimension();
-
-	if(((playerPos.x + (playerDim / 2)) >= GameData::BOARD_WIDTH) ||
-		((playerPos.x - (playerDim / 2)) <= 0)	||
-		((playerPos.y + (playerDim / 2)) >= GameData::BOARD_HEIGHT) || 
-		((playerPos.y - (playerDim / 2)) <= 0))
-	{
-		m_assignedPiece->ReSpawn();
+		m_gameData.m_players[index].TakeTurn();
+		m_playerPieces[index].setPosition(m_gameData.m_players[index].GetPosition());
 	}
 }
 
@@ -248,17 +198,26 @@ void ClientEngine::CheckWallCollisions()
 // ================================================================================================
 void ClientEngine::Render(void)
 {
+	int index = 0;
+
 	// Clear Screen
 	m_mainWindow.clear(sf::Color(0, 0, 0));
 
+
 	// Draw Pellets
-	for(int pIndex = 0; pIndex < GameData::MAX_PELLETS; pIndex++)
+	for(index = 0; index < GameData::MAX_PELLETS; index++)
 	{
-		m_mainWindow.draw(m_pellets[pIndex]);
+		m_mainWindow.draw(m_gameData.m_pellets[index]);
 	}
 
 	// Draw Pieces
-	m_mainWindow.draw(*m_assignedPiece);
+	for(index = 0; index < GameData::MAX_PLAYERS; index++)
+	{
+		if((m_gameData.m_players[index].IsActive()) && !(m_gameData.m_players[index].IsDead()))
+		{
+			m_mainWindow.draw(m_playerPieces[index]);
+		}
+	}
 
 	// Draw Player User Name
 	m_mainWindow.draw(m_userName);

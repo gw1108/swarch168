@@ -33,7 +33,7 @@
     <ClInclude Include="SNetworkController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Jay%27s Realm\GameDev\swarch168\SwarchServer\SPlayer.h">
+    <ClInclude Include="SPlayer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -56,7 +56,7 @@
     <ClCompile Include="SNetworkController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Jay%27s Realm\GameDev\swarch168\SwarchServer\SPlayer.cpp">
+    <ClCompile Include="SPlayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

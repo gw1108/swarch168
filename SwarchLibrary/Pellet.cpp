@@ -71,3 +71,46 @@ void Pellet::Spawn(void)
 
 	setPosition(position);
 }
+
+// ===== Packet Input Overload ====================================================================
+// This method overloads the stream operator used with the sf::Packet class so that the Pellet 
+// class can be input into a packet. 
+//
+// Input:
+//	[IN/OUT] sf::Packet& packet		- the packet to receive the Pellet
+//	[IN]	Pellet& data			- a reference to the Pellet
+//
+// Output:
+//	[OUT] sf::Packet& packet		- will return the passed packet reference
+// ================================================================================================
+sf::Packet& operator<<(sf::Packet& packet, Pellet& data)
+{
+	packet	<< data.getGlobalBounds().left
+			<< data.getGlobalBounds().top;
+
+	return packet;
+}
+
+// ===== Packet Output Overload ====================================================================
+// This method overloads the stream operator used with the sf::Packet class so that the Pellet 
+// class can be extracted from a packet.. 
+//
+// Input:
+//	[IN/OUT] sf::Packet& packet		- the packet that contains the Pellet
+//	[IN]	Pellet& data			- a reference to the Pellet that will receive the data
+//
+// Output:
+//	[OUT] sf::Packet& packet		- will return the passed packet reference
+// ================================================================================================
+sf::Packet& operator>>(sf::Packet& packet, Pellet& data)
+{ 
+	float xCord;
+	float yCord;
+
+	packet	>> xCord
+			>> yCord;
+
+	data.setPosition(xCord, yCord);
+
+	return packet;
+}

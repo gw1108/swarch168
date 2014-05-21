@@ -42,8 +42,7 @@ int CALLBACK WinMain(_In_  HINSTANCE hInstance, _In_  HINSTANCE hPrevInstance, _
 	if(networkControl.IsConnected())
 	{
 		srand((unsigned int)(time(0)));
-//		ClientEngine engine(mainWindow, gameFont, networkControl, menu.GetPlayerNumber(), menu.GetNameString());
-		ClientEngine engine(mainWindow, gameFont, 1, menu.GetNameString());
+		ClientEngine engine(mainWindow, gameFont, networkControl, networkControl.GetPlayerNumber(), menu.GetNameString());
 		engine.Run();
 	}
 	mainWindow.close();

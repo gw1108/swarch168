@@ -14,10 +14,10 @@
 // Initialize Static Constants
 const float GamePiece::START_DIMENSION = 20;
 const float GamePiece::BASE_MOVE_RATE = 3;
-const sf::Color GamePiece::PLAYER1_COLOR = sf::Color(0, 100, 255);	// Blue
-const sf::Color GamePiece::PLAYER2_COLOR = sf::Color(255, 0, 0);	// Red
-const sf::Color GamePiece::PLAYER3_COLOR = sf::Color(0, 255, 0);	// Green
-const sf::Color GamePiece::PLAYER4_COLOR = sf::Color::Yellow;		// Yellow
+const sf::Color GamePiece::PLAYER0_COLOR = sf::Color::Blue;
+const sf::Color GamePiece::PLAYER1_COLOR = sf::Color::Red;
+const sf::Color GamePiece::PLAYER2_COLOR = sf::Color::Green;
+const sf::Color GamePiece::PLAYER3_COLOR = sf::Color::Yellow;
 
 // ===== Constructor ==============================================================================
 // The constructor will use class constants to define the size of the sf::RectangleShape parent.
@@ -29,34 +29,63 @@ const sf::Color GamePiece::PLAYER4_COLOR = sf::Color::Yellow;		// Yellow
 //
 // Output: none
 //  ===============================================================================================
-GamePiece::GamePiece(int player) : m_currentDimension(START_DIMENSION), m_moveRate(BASE_MOVE_RATE), m_direction(Direction::DOWN), m_playerID(player)
+GamePiece::GamePiece(void) :
+	m_currentDimension(START_DIMENSION),
+	m_moveRate(BASE_MOVE_RATE), 
+	m_direction(Direction::DOWN), 
+	m_playerID(0)
 {
 	setSize(sf::Vector2f(START_DIMENSION, START_DIMENSION));
 	setOrigin(sf::Vector2f((START_DIMENSION / 2), (START_DIMENSION / 2)));
+	setFillColor(sf::Color::White);
+}
 
-	if(player == 1)
+// ===== Constructor ==============================================================================
+// The constructor will use class constants to define the size of the sf::RectangleShape parent.
+// It will abstract away most of the set-up required for an sf::RectangleShape. The color and 
+// starting position of the GamePiece will be dictated by which player is passed to the constructor.
+// 
+// Input:
+//	[IN] int player	-	player assigned for this GamePiece, 1 is always this clients user
+//
+// Output: none
+//  ===============================================================================================
+GamePiece::GamePiece(int player) : 
+	m_currentDimension(START_DIMENSION),
+	m_moveRate(BASE_MOVE_RATE), 
+	m_direction(Direction::DOWN), 
+	m_playerID(player)
+{
+	setSize(sf::Vector2f(START_DIMENSION, START_DIMENSION));
+	setOrigin(sf::Vector2f((START_DIMENSION / 2), (START_DIMENSION / 2)));
+	setFillColor(sf::Color::White);
+}
+
+// ===== SetPlayerNumber ==========================================================================
+// Sets the assigned players number and color to this piece. Should be called after initialized.
+//
+// Input:
+//	[IN]	int playerNum	- assigned player
+//
+// Output: none
+// ================================================================================================
+void GamePiece::SetPlayerNumber(int playerNum)
+{
+	if(playerNum == 0)
+	{
+		setFillColor(PLAYER0_COLOR);
+	}
+	else if(playerNum == 1)
 	{
 		setFillColor(PLAYER1_COLOR);
-		setPosition((float)(GameData::BOARD_WIDTH / 2), (float)(GameData::BOARD_HEIGHT / 2));
 	}
-	else if(player == 2)
+	else if(playerNum == 2)
 	{
 		setFillColor(PLAYER2_COLOR);
-		setPosition((float)(GameData::BOARD_WIDTH / 2), (float)(GameData::BOARD_HEIGHT / 2));
 	}
-	else if(player == 3)
+	else if(playerNum == 3)
 	{
 		setFillColor(PLAYER3_COLOR);
-		setPosition((float)(GameData::BOARD_WIDTH / 2), (float)(GameData::BOARD_HEIGHT / 2));
-	}
-	else if(player == 4)
-	{
-		setFillColor(PLAYER4_COLOR);
-		setPosition((float)(GameData::BOARD_WIDTH / 2), (float)(GameData::BOARD_HEIGHT / 2));
-	}
-	else
-	{
-		//invalid input
 	}
 }
 

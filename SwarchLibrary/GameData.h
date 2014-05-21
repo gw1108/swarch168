@@ -20,6 +20,8 @@
 #define GAMEDATA_H
 
 #include <SFML\Network\Packet.hpp>
+#include "Player.h"
+#include "Pellet.h"
 
 class GameData
 {
@@ -43,7 +45,7 @@ public:
 	~GameData(void){}
 
 	// Method Prototypes
-	void Copy(const GameData &other);
+	void CopyFrom(const GameData &other);
 
 	// ============================================================================================
 	// Class Data Members
@@ -55,47 +57,15 @@ public:
 	static const int BOARD_HEIGHT;		// Height of the playable area
 	static const int BOARD_WIDTH;		// Width of the playable area
 	static const int PELLET_GROW_SIZE;	// The amount a players piece should grow when it eats a pellet 
-	static const int MAX_PELLETS;		// Max number of pellets allowed on board
-	static const int MAX_PLAYERS;		// Max number of players allowed in server
-	static const int S_UPDATE_SPEED;	// Determines the speed in milliseconds of the network thread and engine thread
+	static const int MAX_PELLETS = 4;	// Max number of pellets allowed on board
+	static const int MAX_PLAYERS = 4;	// Max number of players allowed in server
+	static const int S_UPDATE_SPEED;	// Determines the speed in milliseconds of the network thread
 
-	// Player One Data
-	float player1X;						// X-Coordinate of the player
-	float player1Y;						// Y-Coordinate of the player
-	int player1Direction;				// Direction of movement
-	bool player1Dead;					// True if the player is dead
-	int player1Score;					
-
-	// Player Two Data
-	float player2X;						// X-Coordinate of the player
-	float player2Y;						// Y-Coordinate of the player
-	int player2Direction;				// Direction of movement
-	bool player2Dead;					// True if the player is dead
-	int player2Score;	
-
-	// Player Three Data
-	float player3X;						// X-Coordinate of the player
-	float player3Y;						// Y-Coordinate of the player
-	int player3Direction;				// Direction of movement
-	bool player3Dead;					// True if the player is dead
-	int player3Score;	
-
-	// Player Four Data
-	float player4X;						// X-Coordinate of the player
-	float player4Y;						// Y-Coordinate of the player
-	int player4Direction;				// Direction of movement
-	bool player4Dead;					// True if the player is dead
-	int player4Score;	
+	// Player Array
+	Player m_players[MAX_PLAYERS];
 
 	// Pellet Data
-	float pellet1X;
-	float pellet1Y;
-	float pellet2X;
-	float pellet2Y;
-	float pellet3X;
-	float pellet3Y;
-	float pellet4X;
-	float pellet4Y;
+	Pellet m_pellets[MAX_PELLETS];
 
 	// Gameplay Data
 	bool reset;						// true if the game should be reset

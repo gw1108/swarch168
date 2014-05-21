@@ -29,9 +29,11 @@ public:
 	// ============================================================================================
 
 	// Constructor Prototype
+	GamePiece(void);
 	GamePiece(int player);
 
 	// Method Prototypes
+	void SetPlayerNumber(int playerNum);
 	void ReSpawn(void);
 	void TakeTurn(void);
 	void TakeTurn(Direction direction);
@@ -53,10 +55,10 @@ public:
 	// Constants
 	static const float START_DIMENSION;
 	static const float BASE_MOVE_RATE;
+	static const sf::Color PLAYER0_COLOR;
 	static const sf::Color PLAYER1_COLOR;
 	static const sf::Color PLAYER2_COLOR;
 	static const sf::Color PLAYER3_COLOR;
-	static const sf::Color PLAYER4_COLOR;
 
 private:
 

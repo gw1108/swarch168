@@ -76,21 +76,21 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\Jay%27s Realm\GameDev\swarch168\SwarchServer\SPlayer.h" />
     <ClInclude Include="Database.h" />
     <ClInclude Include="LogIn.h" />
     <ClInclude Include="ServerEngine.h" />
     <ClInclude Include="SNetworkController.h" />
+    <ClInclude Include="SPlayer.h" />
     <ClInclude Include="sqlite3.h" />
     <ClInclude Include="sqlite3ext.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\Jay%27s Realm\GameDev\swarch168\SwarchServer\SPlayer.cpp" />
     <ClCompile Include="Database.cpp" />
     <ClCompile Include="LogIn.cpp" />
     <ClCompile Include="ServerEngine.cpp" />
     <ClCompile Include="ServerStart.cpp" />
     <ClCompile Include="SNetworkController.cpp" />
+    <ClCompile Include="SPlayer.cpp" />
     <ClCompile Include="sqlite3.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

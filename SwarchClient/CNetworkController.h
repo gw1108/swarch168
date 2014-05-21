@@ -57,7 +57,6 @@ public:
 	void Disconnect(void);
 	void StopListeningThread(void);
 	bool GetNextData(GameData &dataRef);
-	bool GetNewPlayer(Player &dataRef);
 	void SendLogIn(std::string name, std::string pw);
 	void SendDirectionChange(GamePiece::Direction direction);
 
@@ -81,10 +80,6 @@ private:
 	// GameData Queue
 	std::list<GameData> m_dataQueue;
 	std::mutex m_dataLock;
-
-	// NewPlayer Queue
-	std::list<Player> m_newPlayerQueue;
-	std::mutex m_playerLock;
 
 	// Client Data
 	int m_playerNum;

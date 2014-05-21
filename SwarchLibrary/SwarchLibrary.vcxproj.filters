@@ -33,7 +33,7 @@
     <ClCompile Include="Player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Jay%27s Realm\GameDev\swarch168\SwarchLibrary\ServerData.cpp">
+    <ClCompile Include="ServerData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -53,10 +53,7 @@
     <ClInclude Include="Player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Position.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Jay%27s Realm\GameDev\swarch168\SwarchLibrary\ServerData.h">
+    <ClInclude Include="ServerData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

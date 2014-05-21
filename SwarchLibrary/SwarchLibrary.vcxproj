@@ -87,21 +87,20 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\Jay%27s Realm\GameDev\swarch168\SwarchLibrary\ServerData.cpp" />
     <ClCompile Include="GameData.cpp" />
     <ClCompile Include="GamePiece.cpp" />
     <ClCompile Include="LogInData.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Pellet.cpp" />
+    <ClCompile Include="ServerData.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\Jay%27s Realm\GameDev\swarch168\SwarchLibrary\ServerData.h" />
     <ClInclude Include="GameData.h" />
     <ClInclude Include="GamePiece.h" />
     <ClInclude Include="LogInData.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Pellet.h" />
-    <ClInclude Include="Position.h" />
+    <ClInclude Include="ServerData.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

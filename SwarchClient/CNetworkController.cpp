@@ -20,13 +20,11 @@ const int CNetworkController::MAX_QUEUE = 1;
 //  ===============================================================================================
 CNetworkController::CNetworkController(const sf::Clock& gameClock) :
 	m_gameClock(gameClock),
-	m_listeningThread(NULL),
+	m_listeningThread(nullptr),
 	m_serverConnection(),
 	m_connected(false),
 	m_dataQueue(),
 	m_dataLock(),
-	m_newPlayerQueue(),
-	m_playerLock(),
 	m_playerNum(-1),
 	m_responded(false),
 	m_serverResponse(-1)
@@ -40,8 +38,6 @@ CNetworkController::CNetworkController(const sf::Clock& gameClock) :
 CNetworkController::~CNetworkController()
 {
 	StopListeningThread();
-	m_dataQueue.clear();
-	m_newPlayerQueue.clear();
 }
 
 // ===== Connect ==================================================================================
@@ -105,7 +101,7 @@ void CNetworkController::Disconnect(void)
 // ================================================================================================
 void CNetworkController::StopListeningThread(void)
 {
-	if (m_listeningThread != NULL)
+	if (m_listeningThread != nullptr)
 	{
 		m_connected = false;		// Set Thread-Loop conditional to false
 		m_listeningThread->join();	// Wait for thread to end
@@ -147,17 +143,6 @@ void CNetworkController::SocketListening(void)
 				m_responded = true;
 				m_serverResponse = serverResponse;
 				m_playerNum = playerNum;
-			}
-			else if(cmdCode == GameData::NEW_PLAYER)
-			{
-				Player newPlayer;
-				receivedPacket >> newPlayer;
-
-				m_playerLock.lock();	// Lock Data
-
-				m_newPlayerQueue.push_back(newPlayer);
-
-				m_playerLock.unlock();	// Unlock Data
 			}
 			else if(cmdCode == GameData::GAME_UPDATE)
 			{
@@ -203,40 +188,10 @@ bool CNetworkController::GetNextData(GameData &dataRef)
 		m_dataLock.lock();		// Lock Data
 
 		GameData data = m_dataQueue.front();
-		dataRef.Copy(data);
+		dataRef.CopyFrom(data);
 		m_dataQueue.pop_front();
 
 		m_dataLock.unlock();	// Unlock Data
-
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
-
-// ===== GetNewPlayer =============================================================================
-// The method will update the passed NewPlayer reference with the next player that joined the game.
-// Will return false if no new players exist.
-// 
-// Input:
-//	[IN/OUT] NewPlayer &dataRef	-	a reference to the clients NewPlayer object
-//
-// Output:
-//	[OUT] bool					-	true if updated, false otherwise
-// ================================================================================================
-bool CNetworkController::GetNewPlayer(Player &dataRef)
-{
-	if(!m_newPlayerQueue.empty())
-	{
-		m_playerLock.lock();		// Lock Data
-
-		Player data = m_newPlayerQueue.front();
-		dataRef.CopyFrom(data);
-		m_newPlayerQueue.pop_front();
-
-		m_playerLock.unlock();	// Unlock Data
 
 		return true;
 	}

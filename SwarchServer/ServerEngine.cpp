@@ -8,6 +8,13 @@ ServerEngine::ServerEngine(void)
 	players(),
 	networkController()
 {
+	for(int i = 0; i < GameData::MAX_PLAYERS; ++i)
+	{
+		Player player;
+		GamePiece piece;
+		players.insert(std::make_pair(i, std::make_pair(player, piece)));
+	}
+
 	//setup game pellets
 	gamePellets = new Pellet[GameData::MAX_PELLETS];
 	for(int i = 0; i < GameData::MAX_PELLETS; ++i)
@@ -48,28 +55,36 @@ void ServerEngine::run(void)
 				}
 				else if(data.m_command == ServerData::ServerCommands::LOG_IN)
 				{
-					GamePiece newPlayer(data.m_playerNumber);
-					players.insert(std::make_pair(data.m_playerNumber, newPlayer));
+					GamePiece piece(data.m_playerNumber);
+					piece.ReSpawn();
+					Player player;
+					player.SetUsername(data.m_playerName);
+					player.SetActive(true);
+					player.SetPlayerNumber(data.m_playerNumber);
+					player.SetPosition(piece.getPosition());
+					players.at(data.m_playerNumber) = std::make_pair(player, piece);
 					cout << "Player " << data.m_playerNumber << " logged in to engine" << endl;
 				}
 				else if(data.m_command == ServerData::ServerCommands::LOG_OUT)
 				{
-					players.erase(data.m_playerNumber);
-					cout << "Player " << data.m_playerNumber << " logged out of engine" << endl;
+					players.at(data.m_playerNumber).first.SetActive(false);
 				}
 			}
 
 			//update people
 			for(auto it = players.begin(); it != players.end(); ++it)
 			{
-				(*it).second.TakeTurn();
+				if((*it).second.first.IsActive())
+				{
+					(*it).second.first.TakeTurn();
 
-				//check for collision against pellets and walls
-				CheckPelletCollisions((*it).second);
+					//check for collision against pellets and walls
+					CheckPelletCollisions((*it).second.first);
 
-				CheckWallCollisions((*it).second);
+					CheckWallCollisions((*it).second.first);
 
-				CheckPlayerCollision((*it).second);
+					CheckPlayerCollision((*it).second.first);
+				}
 			}
 
 			//send update to players
@@ -93,9 +108,9 @@ void ServerEngine::stop(void)
 // Input: none
 // Output: none
 // ================================================================================================
-void ServerEngine::CheckPelletCollisions(GamePiece& playerPiece)
+void ServerEngine::CheckPelletCollisions(Player& playerPiece)
 {
-	sf::FloatRect playerBounds = playerPiece.getGlobalBounds();
+	sf::FloatRect playerBounds = playerPiece.GetRectangle();
 	sf::FloatRect pelletBounds;
 
 	for(int pIndex = 0; pIndex < GameData::MAX_PELLETS; pIndex++)
@@ -117,9 +132,9 @@ void ServerEngine::CheckPelletCollisions(GamePiece& playerPiece)
 // Input: none
 // Output: none
 // ================================================================================================
-void ServerEngine::CheckWallCollisions(GamePiece& playerPiece)
+void ServerEngine::CheckWallCollisions(Player& playerPiece)
 {
-	sf::Vector2f playerPos = playerPiece.getPosition();
+	sf::Vector2f playerPos = playerPiece.GetPosition();
 	float playerDim = playerPiece.GetDimension();
 
 	if(((playerPos.x + (playerDim / 2)) >= GameData::BOARD_WIDTH) ||
@@ -127,7 +142,7 @@ void ServerEngine::CheckWallCollisions(GamePiece& playerPiece)
 		((playerPos.y + (playerDim / 2)) >= GameData::BOARD_HEIGHT) || 
 		((playerPos.y - (playerDim / 2)) <= 0))
 	{
-		cout << "Player " << playerPiece.getPlayerID() << " has foolishly hit a wall and died " << endl;
+		cout << "Player " << playerPiece.GetAssignedNumber() << " has foolishly hit a wall and died " << endl;
 		playerPiece.ReSpawn();
 	}
 }
@@ -140,26 +155,26 @@ void ServerEngine::CheckWallCollisions(GamePiece& playerPiece)
 // Input: none
 // Output: none
 // ================================================================================================
-void ServerEngine::CheckPlayerCollision(GamePiece& playerPiece)
+void ServerEngine::CheckPlayerCollision(Player& playerPiece)
 {
 	for(auto it = players.begin(); it != players.end(); it++)
 	{
-		if((*it).second.getPlayerID() != playerPiece.getPlayerID())
+		if((*it).second.first.GetAssignedNumber() != playerPiece.GetAssignedNumber())
 		{
 			//not the same check collisions
-			if( (*it).second.getGlobalBounds().intersects(playerPiece.getGlobalBounds()) )
+			if( (*it).second.first.GetRectangle().intersects(playerPiece.GetRectangle()) )
 			{
-				GamePiece* smallPiece;
-				GamePiece* largePiece;
+				Player* smallPiece;
+				Player* largePiece;
 				//they collided eliminate the smaller one
-				if(playerPiece.GetDimension() < (*it).second.GetDimension())
+				if(playerPiece.GetDimension() < (*it).second.first.GetDimension())
 				{
 					smallPiece = &playerPiece;
-					largePiece = &((*it).second);
+					largePiece = &((*it).second.first);
 				}
 				else
 				{
-					smallPiece = &((*it).second);
+					smallPiece = &((*it).second.first);
 					largePiece = &playerPiece;
 				}
 				largePiece->Grow(smallPiece->GetDimension());
@@ -175,9 +190,9 @@ void ServerEngine::UpdatePlayerDirection(ServerData data)
 	//update player directions
 	for(auto it = players.begin(); it != players.end(); ++it)
 	{
-		if((*it).second.getPlayerID() == data.m_playerNumber)
+		if((*it).second.first.GetAssignedNumber() == data.m_playerNumber)
 		{
-			(*it).second.m_direction = static_cast<GamePiece::Direction>(data.direction);
+			(*it).second.first.SetDirection(static_cast<GamePiece::Direction>(data.direction));
 		}
 	}
 }
@@ -185,58 +200,18 @@ void ServerEngine::UpdatePlayerDirection(ServerData data)
 GameData ServerEngine::getCurrentGameData(void)
 {
 	GameData currentGameData;
-	currentGameData.pellet1X = gamePellets[0].getPosition().x;
-	currentGameData.pellet1Y = gamePellets[0].getPosition().y;
-	currentGameData.pellet2X = gamePellets[1].getPosition().x;
-	currentGameData.pellet2Y = gamePellets[1].getPosition().y;
-	currentGameData.pellet3X = gamePellets[2].getPosition().x;
-	currentGameData.pellet3Y = gamePellets[2].getPosition().y;
-	currentGameData.pellet4X = gamePellets[3].getPosition().x;
-	currentGameData.pellet4Y = gamePellets[3].getPosition().y;
 
-	if(players.find(1) != players.end())
+	for(auto it = players.begin(); it != players.end(); ++it)
 	{
-		GamePiece& currentPiece = (*players.find(1)).second;
-
-		currentGameData.player1X = currentPiece.getPosition().x;
-		currentGameData.player1Y = currentPiece.getPosition().y;
-		currentGameData.player1Dead = false;
-		currentGameData.player1Direction = currentPiece.m_direction;
-		currentGameData.player1Score = currentPiece.GetDimension();
-	}
-	
-	if(players.find(2) != players.end())
-	{
-		GamePiece& currentPiece = (*players.find(2)).second;
-
-		currentGameData.player2X = currentPiece.getPosition().x;
-		currentGameData.player2Y = currentPiece.getPosition().y;
-		currentGameData.player2Dead = false;
-		currentGameData.player2Direction = currentPiece.m_direction;
-		currentGameData.player2Score = currentPiece.GetDimension();
+		currentGameData.m_players[(*it).first].CopyFrom((*it).second.first);
 	}
 
-	if(players.find(3) != players.end())
+	for(int i = 0; i < GameData::MAX_PELLETS; ++i)
 	{
-		GamePiece& currentPiece = (*players.find(3)).second;
-
-		currentGameData.player3X = currentPiece.getPosition().x;
-		currentGameData.player3Y = currentPiece.getPosition().y;
-		currentGameData.player3Dead = false;
-		currentGameData.player3Direction = currentPiece.m_direction;
-		currentGameData.player3Score = currentPiece.GetDimension();
+		currentGameData.m_pellets[i] = gamePellets[i];
 	}
 
-	if(players.find(4) != players.end())
-	{
-		GamePiece& currentPiece = (*players.find(4)).second;
-
-		currentGameData.player4X = currentPiece.getPosition().x;
-		currentGameData.player4Y = currentPiece.getPosition().y;
-		currentGameData.player4Dead = false;
-		currentGameData.player4Direction = currentPiece.m_direction;
-		currentGameData.player4Score = currentPiece.GetDimension();
-	}
+	currentGameData.reset = false;
 
 	return currentGameData;
 }
