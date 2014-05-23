@@ -264,11 +264,11 @@ void MenuSystem::AttemptConnection(void)
 		// Wait for Server Response
 		sf::Clock waitClock;
 		float waitTime = 5000; // Wait 5 Seconds for Server Response
-		float startTime = waitClock.getElapsedTime().asMilliseconds();
+		sf::Int32 startTime = waitClock.getElapsedTime().asMilliseconds();
 
 		while(!m_nwcRef.ServerResponded())
 		{
-			float currentTime = waitClock.getElapsedTime().asMilliseconds();
+			sf::Int32 currentTime = waitClock.getElapsedTime().asMilliseconds();
 
 			if((currentTime - startTime) >= waitTime)
 			{

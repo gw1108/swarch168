@@ -233,7 +233,7 @@ void CNetworkController::SendLogIn(std::string name, std::string pw)
 //
 // Output: none
 // ================================================================================================
-void CNetworkController::SendDirectionChange(GamePiece::Direction direction)
+void CNetworkController::SendDirectionChange(Player::Direction direction)
 {
 	sf::Uint8 commandCode = GameData::PLAYER_UPDATE;
 	sf::Int32 timeStamp = m_gameClock.getElapsedTime().asMilliseconds();

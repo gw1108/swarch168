@@ -15,7 +15,6 @@
 #include <SFML\System\Clock.hpp>
 #include <SFML\Graphics.hpp>
 #include "CNetworkController.h"
-#include "GamePiece.h"
 #include "GameData.h"
 #include "Pellet.h"
 
@@ -65,16 +64,14 @@ private:
 	sf::Clock m_engineClock;
 	bool m_running;
 	
-	// User Data
+	// Player Names
 	sf::Text m_userNames[GameData::MAX_PLAYERS];
 
 	// Most Recent Data
 	GameData m_gameData;
 
-	// Game Pieces
+	// Assigned Player Number
 	int m_playerNum;
-	GamePiece *m_assignedPiece;
-	GamePiece m_playerPieces[GameData::MAX_PLAYERS];
 };
 
 #endif

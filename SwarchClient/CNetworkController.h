@@ -58,7 +58,7 @@ public:
 	void StopListeningThread(void);
 	bool GetNextData(GameData &dataRef);
 	void SendLogIn(std::string name, std::string pw);
-	void SendDirectionChange(GamePiece::Direction direction);
+	void SendDirectionChange(Player::Direction direction);
 
 	// Inlined Methods
 	bool IsConnected(void){ return m_connected; }

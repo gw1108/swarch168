@@ -28,19 +28,9 @@ ClientEngine::ClientEngine(sf::RenderWindow& mainWindow, const sf::Font& gameFon
 	m_running(false),
 	m_userNames(),
 	m_gameData(),
-	m_playerPieces(),
 	m_playerNum(assignedPlayer)
 {
-	// Set up the Players
-	for(int index = 0; index < GameData::MAX_PLAYERS; index++)
-	{
-		m_playerPieces[index].SetPlayerNumber(index);
-	}
-
 	SetUpTextFields();
-
-	m_assignedPiece = &(m_playerPieces[assignedPlayer]);
-
 	m_engineClock.restart();
 }
 
@@ -60,9 +50,8 @@ ClientEngine::~ClientEngine(void)
 // ================================================================================================
 void ClientEngine::Run(void)
 {
-	GamePiece::Direction newDirection = GamePiece::DOWN;
-	GamePiece::Direction moveDirection = GamePiece::DOWN;
-	Player newPlayer;
+	Player::Direction newDirection = Player::DOWN;
+	Player::Direction moveDirection = Player::DOWN;
 
 	m_running = true;
 
@@ -92,25 +81,26 @@ void ClientEngine::Run(void)
 			sf::Event event;
 			while(m_mainWindow.pollEvent(event))
 			{
-				if((event.type == sf::Event::Closed) || ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape)))
+				if((event.type == sf::Event::Closed) || ((event.type == sf::Event::KeyPressed) && 
+														 (event.key.code == sf::Keyboard::Escape)))
 				{
 					m_running = false;
 				}
 				else if((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::W))
 				{
-					newDirection = GamePiece::UP;
+					newDirection = Player::UP;
 				}
 				else if((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::S))
 				{
-					newDirection = GamePiece::DOWN;
+					newDirection = Player::DOWN;
 				}
 				else if((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::A))
 				{
-					newDirection = GamePiece::LEFT;
+					newDirection = Player::LEFT;
 				}
 				else if((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::D))
 				{
-					newDirection = GamePiece::RIGHT;
+					newDirection = Player::RIGHT;
 				}
 			} 
 
@@ -125,17 +115,6 @@ void ClientEngine::Run(void)
 			Render();
 		}
 	}
-}
-
-// ===== UpdatePellets ============================================================================
-// This method updates the pelletes positions and handles the adding and removing of pellets. This
-// should be called whenever new data is received from the server.
-//
-// Input: none
-// Output: none
-// ================================================================================================
-void ClientEngine::UpdatePellets()
-{
 }
 
 // ===== UpdateGamePieces =========================================================================
@@ -159,11 +138,6 @@ void ClientEngine::UpdateGamePieces(bool reset)
 	{
 		for(index = 0; index < GameData::MAX_PLAYERS; index++)
 		{
-			m_playerPieces[index].setSize(sf::Vector2f(m_gameData.m_players[index].GetDimension(),
-													   m_gameData.m_players[index].GetDimension()));
-
-			m_playerPieces[index].setPosition(m_gameData.m_players[index].GetPosition());
-
 			m_userNames[index].setString( m_gameData.m_players[index].GetUsername());
 		}
 	}
@@ -184,7 +158,6 @@ void ClientEngine::PredictOpponents()
 	for(index = 0; index < GameData::MAX_PLAYERS; index++)
 	{
 		m_gameData.m_players[index].TakeTurn();
-		m_playerPieces[index].setPosition(m_gameData.m_players[index].GetPosition());
 	}
 }
 
@@ -211,7 +184,7 @@ void ClientEngine::SetUpTextFields(void)
 		}
 		else if(index == 1)
 		{
-			m_userNames[index].setPosition((GameData::BOARD_WIDTH / 2), topBuffer);
+			m_userNames[index].setPosition((GameData::BOARD_WIDTH / 2.f), topBuffer);
 			m_userNames[index].setColor(GamePiece::PLAYER1_COLOR);
 		}
 		else if(index == 2)
@@ -221,7 +194,7 @@ void ClientEngine::SetUpTextFields(void)
 		}
 		else if(index == 3)
 		{
-			m_userNames[index].setPosition((GameData::BOARD_WIDTH / 2), (GameData::BOARD_HEIGHT - bottomBuffer));
+			m_userNames[index].setPosition((GameData::BOARD_WIDTH / 2.f), (GameData::BOARD_HEIGHT - bottomBuffer));
 			m_userNames[index].setColor(GamePiece::PLAYER3_COLOR);
 		}
 	}
@@ -257,7 +230,7 @@ void ClientEngine::Render(void)
 
 			if(!(m_gameData.m_players[index].IsDead()))
 			{
-				m_mainWindow.draw(m_playerPieces[index]);
+				m_mainWindow.draw(m_gameData.m_players[index].GetPiece());
 			}
 			
 		}

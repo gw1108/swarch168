@@ -2,7 +2,7 @@
 // Filename: "Player.cpp"
 // ================================================================================================
 // Author: Travis Smith
-// Last Modified: May 20, 2014
+// Last Modified: May 22, 2014
 // ================================================================================================
 // This is the class implementation file for the Player class. For a class description see the 
 // header file "Player.h"
@@ -29,11 +29,12 @@ Player::Player(void) :
 	m_username(),
 	m_playerNum(-1),
 	m_position(),
-	m_direction(GamePiece::UP),
-	m_active(false),
-	m_dead(false),
+	m_direction(UP),
+	m_moveRate(BASE_MOVE_RATE),
 	m_currentDimension(START_DIMENSION),
-	m_moveRate(BASE_MOVE_RATE)
+	m_piece(m_playerNum, m_position, m_currentDimension),
+	m_active(false),
+	m_dead(false)
 {}
 
 // ===== Conversion Constructor ===================================================================
@@ -53,11 +54,12 @@ Player::Player(std::string userName, int playerNum, sf::Vector2f position, bool 
 	m_username(userName),
 	m_playerNum(playerNum),
 	m_position(position),
-	m_direction(GamePiece::UP),
-	m_active(active),
-	m_dead(false),
+	m_direction(UP),
+	m_moveRate(BASE_MOVE_RATE),
 	m_currentDimension(START_DIMENSION),
-	m_moveRate(BASE_MOVE_RATE)
+	m_piece(m_playerNum, m_position, m_currentDimension),
+	m_active(active),
+	m_dead(false)
 {}
 
 // ===== CopyFrom =================================================================================
@@ -75,26 +77,23 @@ void Player::CopyFrom(const Player &other)
 	m_playerNum = other.m_playerNum;
 	m_position = other.m_position;
 	m_direction = other.m_direction;
-	m_active = other.m_active;
-	m_dead = other.m_dead;
 	m_moveRate = other.m_moveRate;
 	m_currentDimension = other.m_currentDimension;
+	m_piece.Rebuild(m_playerNum, m_position, m_currentDimension);
+	m_active = other.m_active;
+	m_dead = other.m_dead;
 }
 
 // ===== ReSpawn ==================================================================================
-// Will respawn the player in a randomly generated position. This method should be called after
-// death.
+// Will set the players position to a random location within the bounds of the game board and reset
+// the size of the players piece back to the starting dimension. It will also unflag m_dead.
 //
-// Input:
-//	[IN]	sf::Vector2f destination	- a vector that represents the position that the piece 
-//										  will be moved to
-//
+// Input: none
 // Output: none
 // ================================================================================================
 void Player::ReSpawn(void)
 {
-	ResetSize();
-
+	// Randomly Select New Position
 	float xCoord = 0;
 	float yCoord = 0;
 
@@ -120,93 +119,70 @@ void Player::ReSpawn(void)
 		yCoord = (GameData::BOARD_HEIGHT - 10.f);
 	}
 
-	sf::Vector2f position(xCoord, yCoord);
+	// Reset Size and Set new Position
+	m_currentDimension = START_DIMENSION;
+	SetPosition(xCoord, yCoord);
+	CalculateSpeed();
 
-	m_position = position;
+	// Update GamePiece
+	m_piece.Update(m_position, m_currentDimension);
+
+	// Revive Player
 	m_dead = false;
 }
 
 // ===== TakeTurn =================================================================================
-// The TakeTurn method will adjust the position by the m_moveRate in the direction passed. This
-// should be called on every game loop.
+// The TakeTurn method will adjust the position by the m_moveRate in the m_direction. This should 
+// be called on every game loop.
 //
-// Input:
-//	[IN]	int direction	- an int that specifies the direction of movement
-//
+// Input: none
 // Output: none
 // ================================================================================================
-void Player::TakeTurn(GamePiece::Direction direction)
+void Player::TakeTurn(void)
 {
-	m_direction = direction;
-
-	if(direction == GamePiece::UP)
+	if(m_direction == UP)
 	{
 		m_position.y -= m_moveRate; 
 	}
-	else if(direction == GamePiece::DOWN)
+	else if(m_direction == DOWN)
 	{
 		m_position.y += m_moveRate; 
 	}
-	else if(direction == GamePiece::RIGHT)
+	else if(m_direction == RIGHT)
 	{
 		m_position.x += m_moveRate;
 	}
-	else if(direction == GamePiece::LEFT)
+	else if(m_direction == LEFT)
 	{
 		m_position.x -= m_moveRate;  
 	}
 	else
 	{
-		// Invalid direction passed
+		// Error with Direction; Dont Update GamePiece
+		return;
 	}
+
+	m_piece.Update(m_position);
 }
 
-void Player::TakeTurn(void)
-{
-	TakeTurn(m_direction);
-}
-
-// ===== Grow(pellet)==============================================================================
-// The Grow method will adjust the size of the GamePiece by the PELLET_GROW_SIZE specified in 
-// GameData.
-//
-// Input: none
-// Output: none
-// ================================================================================================
-void Player::Grow(void)
-{
-	m_currentDimension += GameData::PELLET_GROW_SIZE;
-
-	CalculateSpeed();
-}
-
-// ===== Grow(player) =============================================================================
-// This overloaded version of Grow will take the size of the opponent that was just eaten and use
-// it to calculate the new size of this piece.
+// ===== Grow =====================================================================================
+// Method will increase the size of the player based on the size of the player that was just 
+// "eaten".
 //
 // Input: 
-//		[IN]	int opponentSize	- the m_currentDimension of the eaten GamePiece
+//		[IN]	int foodSize		- the size of whatever the player has eaten
 //
 // Output: none
 // ================================================================================================
-void Player::Grow(float opponentSize)
+void Player::Grow(float foodSize)
 {
-	m_currentDimension += opponentSize;
+	m_currentDimension += foodSize;
 
-	CalculateSpeed();
-}
+	// Update Player Center
+	m_position.x += (foodSize / 2);
+	m_position.y += (foodSize / 2);
 
-// ===== ResetSize ================================================================================
-// Will reset the m_currentDimension to the START_DIMENSION. This should be called whenever a 
-// GamePiece is killed or when starting a new game.
-//
-// Input: none
-// Output: none
-// ================================================================================================
-void Player::ResetSize(void)
-{
-	m_currentDimension = START_DIMENSION;
-
+	m_piece.Update(m_position, m_currentDimension);
 	CalculateSpeed();
 }
 
@@ -225,15 +201,72 @@ void Player::CalculateSpeed(void)
 	m_moveRate = (percentage * BASE_MOVE_RATE);
 }
 
-// ===== GetRectangle =============================================================================
-// TODO
+// ===== GetBoundingRectangle =====================================================================
+// Returns the bounding rectangle of the players m_piece.
 //
 // Input: none
-// Output: none
+// Output: 
+//	[OUT] sf::Rect<float>	-	the contained GamePiece's bounding rectangle
 // ================================================================================================
-sf::Rect<float> Player::GetRectangle(void)
+sf::Rect<float> Player::GetBoundingRectangle(void)
 {
-	return sf::Rect<float>(m_position.x, m_position.y, m_currentDimension, m_currentDimension);
+	return m_piece.getGlobalBounds();
+}
+
+// ===== CollidesWith(player) =====================================================================
+// Method will check if the calling player's bounding rectangle intersects with the bounds of the
+// passed player. Method will return false if any error is detected while checking collision.
+//
+// Input:
+//	[IN]	const Player &other
+//
+// Output:
+//	[OUT]	bool intersects		- true if the rectangles intersect, false otherwise or if error
+// ================================================================================================
+bool Player::CollidesWith(const Player& other) const
+{
+	return m_piece.getGlobalBounds().intersects(other.m_piece.getGlobalBounds());
+}
+
+// ===== CollidesWith(pellet) =====================================================================
+// Method will check if the calling player's bounding rectangle intersects with the bounds of the
+// passed pellet. Method will return false if any error is detected while checking collision.
+//
+// Input:
+//	[IN]	const Pellet &pellet
+//
+// Output:
+//	[OUT]	bool intersects		- true if the rectangles intersect, false otherwise or if error
+// ================================================================================================
+bool Player::CollidesWith(const Pellet& pellet) const
+{
+	return m_piece.getGlobalBounds().intersects(pellet.getGlobalBounds());
+}
+
+// ===== OutOfBounds ==============================================================================
+// Method will compare passed players bounding rectangle with the bounds of the game board. If the
+// players rectangle has intersected with or left the bounding rectangle of the board, this method
+// will return true. This method will return false if there are errors.
+//
+// Input:
+//	[IN]	const Player &player
+//
+// Output:
+//	[OUT]	bool intersects		- true if out of bounds, false otherwise or if error
+// ================================================================================================
+bool Player::OutOfBounds(void) const
+{
+	if (((m_position.x + (m_currentDimension / 2)) >= GameData::BOARD_WIDTH) ||
+		((m_position.x - (m_currentDimension / 2)) <= 0)	||
+		((m_position.y + (m_currentDimension / 2)) >= GameData::BOARD_HEIGHT) || 
+		((m_position.y - (m_currentDimension / 2) <= 0)))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 // ===== Packet Input Overload ====================================================================
@@ -298,7 +331,7 @@ sf::Packet& operator>>(sf::Packet& packet, Player& data)
 	data.SetUsername(username);
 	data.SetPlayerNumber(playerNum);
 	data.SetPosition(xCord, yCord);
-	data.SetDirection((GamePiece::Direction)dir);
+	data.SetDirection((Player::Direction)dir);
 	data.SetActive(state);
 	data.SetDead(dead);
 	data.SetMoveRate(moveRate);

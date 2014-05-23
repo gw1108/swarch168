@@ -11,8 +11,7 @@ ServerEngine::ServerEngine(void)
 	for(int i = 0; i < GameData::MAX_PLAYERS; ++i)
 	{
 		Player player;
-		GamePiece piece;
-		players.insert(std::make_pair(i, std::make_pair(player, piece)));
+		players.insert(std::make_pair(i, player));
 	}
 
 	//setup game pellets
@@ -55,35 +54,33 @@ void ServerEngine::run(void)
 				}
 				else if(data.m_command == ServerData::ServerCommands::LOG_IN)
 				{
-					GamePiece piece(data.m_playerNumber);
-					piece.ReSpawn();
 					Player player;
+					player.ReSpawn();
 					player.SetUsername(data.m_playerName);
 					player.SetActive(true);
 					player.SetPlayerNumber(data.m_playerNumber);
-					player.SetPosition(piece.getPosition());
-					players.at(data.m_playerNumber) = std::make_pair(player, piece);
+					players.at(data.m_playerNumber) = player;
 					cout << "Player " << data.m_playerNumber << " logged in to engine" << endl;
 				}
 				else if(data.m_command == ServerData::ServerCommands::LOG_OUT)
 				{
-					players.at(data.m_playerNumber).first.SetActive(false);
+					players.at(data.m_playerNumber).SetActive(false);
 				}
 			}
 
 			//update people
 			for(auto it = players.begin(); it != players.end(); ++it)
 			{
-				if((*it).second.first.IsActive())
+				if((*it).second.IsActive())
 				{
-					(*it).second.first.TakeTurn();
+					(*it).second.TakeTurn();
 
 					//check for collision against pellets and walls
-					CheckPelletCollisions((*it).second.first);
+					CheckPelletCollisions((*it).second);
 
-					CheckWallCollisions((*it).second.first);
+					CheckWallCollisions((*it).second);
 
-					CheckPlayerCollision((*it).second.first);
+					CheckPlayerCollision((*it).second);
 				}
 			}
 
@@ -103,24 +100,19 @@ void ServerEngine::stop(void)
 }
 
 // ===== CheckPelletCollisions ====================================================================
-// Method will check if the player's piece has collided with any of the pellets.
+// Method will check for collisions between all players and all pellets.
 //
 // Input: none
 // Output: none
 // ================================================================================================
-void ServerEngine::CheckPelletCollisions(Player& playerPiece)
+void ServerEngine::CheckPelletCollisions(Player& player)
 {
-	sf::FloatRect playerBounds = playerPiece.GetRectangle();
-	sf::FloatRect pelletBounds;
-
-	for(int pIndex = 0; pIndex < GameData::MAX_PELLETS; pIndex++)
+	for(int pelletIndex = 0; pelletIndex < GameData::MAX_PELLETS; pelletIndex++)
 	{
-		pelletBounds = gamePellets[pIndex].getGlobalBounds();
-
-		if(playerBounds.intersects(pelletBounds))
+		if(player.CollidesWith(gamePellets[pelletIndex]))
 		{
-			playerPiece.Grow();
-			gamePellets[pIndex].Spawn();
+			player.Grow();
+			gamePellets[pelletIndex].Spawn();
 		}
 	}
 }
@@ -132,18 +124,12 @@ void ServerEngine::CheckPelletCollisions(Player& playerPiece)
 // Input: none
 // Output: none
 // ================================================================================================
-void ServerEngine::CheckWallCollisions(Player& playerPiece)
+void ServerEngine::CheckWallCollisions(Player& player)
 {
-	sf::Vector2f playerPos = playerPiece.GetPosition();
-	float playerDim = playerPiece.GetDimension();
-
-	if(((playerPos.x + playerDim) >= GameData::BOARD_WIDTH) ||
-		(playerPos.x <= 0)	||
-		((playerPos.y + playerDim) >= GameData::BOARD_HEIGHT) || 
-		(playerPos.y <= 0))
+	if(player.OutOfBounds())
 	{
-		cout << "Player " << playerPiece.GetAssignedNumber() << " has foolishly hit a wall and died " << endl;
-		playerPiece.ReSpawn();
+		cout << "Player " << player.GetAssignedNumber() << " has foolishly hit a wall and died " << endl;
+		player.ReSpawn();
 	}
 }
 
@@ -155,27 +141,27 @@ void ServerEngine::CheckWallCollisions(Player& playerPiece)
 // Input: none
 // Output: none
 // ================================================================================================
-void ServerEngine::CheckPlayerCollision(Player& playerPiece)
+void ServerEngine::CheckPlayerCollision(Player& player)
 {
 	for(auto it = players.begin(); it != players.end(); it++)
 	{
-		if((*it).second.first.GetAssignedNumber() != playerPiece.GetAssignedNumber())
+		if((*it).second.GetAssignedNumber() != player.GetAssignedNumber())
 		{
 			//not the same check collisions
-			if( (*it).second.first.GetRectangle().intersects(playerPiece.GetRectangle()) )
+			if( (*it).second.CollidesWith(player))
 			{
 				Player* smallPiece;
 				Player* largePiece;
 				//they collided eliminate the smaller one
-				if(playerPiece.GetDimension() < (*it).second.first.GetDimension())
+				if(player.GetDimension() < (*it).second.GetDimension())
 				{
-					smallPiece = &playerPiece;
-					largePiece = &((*it).second.first);
+					smallPiece = &player;
+					largePiece = &((*it).second);
 				}
 				else
 				{
-					smallPiece = &((*it).second.first);
-					largePiece = &playerPiece;
+					smallPiece = &((*it).second);
+					largePiece = &player;
 				}
 				largePiece->Grow(smallPiece->GetDimension());
 				smallPiece->ReSpawn();
@@ -190,9 +176,9 @@ void ServerEngine::UpdatePlayerDirection(ServerData data)
 	//update player directions
 	for(auto it = players.begin(); it != players.end(); ++it)
 	{
-		if((*it).second.first.GetAssignedNumber() == data.m_playerNumber)
+		if((*it).second.GetAssignedNumber() == data.m_playerNumber)
 		{
-			(*it).second.first.SetDirection(static_cast<GamePiece::Direction>(data.direction));
+			(*it).second.SetDirection(static_cast<Player::Direction>(data.direction));
 		}
 	}
 }
@@ -203,7 +189,7 @@ GameData ServerEngine::getCurrentGameData(void)
 
 	for(auto it = players.begin(); it != players.end(); ++it)
 	{
-		currentGameData.m_players[(*it).first].CopyFrom((*it).second.first);
+		currentGameData.m_players[(*it).first].CopyFrom((*it).second);
 	}
 
 	for(int i = 0; i < GameData::MAX_PELLETS; ++i)

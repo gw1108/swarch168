@@ -2,7 +2,7 @@
 // Filename: "GamePiece.h"
 // ================================================================================================
 // Author(s): Travis Smith
-// Last Modified: Apr 16, 2014
+// Last Modified: May 22, 2014
 // ================================================================================================
 // Class Description:
 // 
@@ -22,39 +22,25 @@ class GamePiece: public sf::RectangleShape
 
 public:
 
-	enum Direction {UP, DOWN, LEFT, RIGHT};
-
 	// ============================================================================================
 	// Methods
 	// ============================================================================================
 
 	// Constructor Prototype
-	GamePiece(void);
-	GamePiece(int player);
+	GamePiece(int player, sf::Vector2f position, float dimension);
 
 	// Method Prototypes
-	void SetPlayerNumber(int playerNum);
-	void ReSpawn(void);
-	void TakeTurn(void);
-	void TakeTurn(Direction direction);
-	void Grow(void);
-	void Grow(int opponentSize);
-	void ResetSize(void);
-	
-	// Inlined Methods
-	float GetDimension(void){ return m_currentDimension; }
-	float GetMoveRate(void){ return m_moveRate; }
-	int getPlayerID(void) const { return m_playerID; }
+	void Rebuild(int player, sf::Vector2f position, float dimension);
+	void Update(sf::Vector2f position, float dimension);
+	void Update(sf::Vector2f position);
+	void Update(float dimension);
+	void SetColor(int playerNum);
 
-	
 	// ============================================================================================
 	// Class Data Members
 	// ============================================================================================
-	Direction m_direction;
 
 	// Constants
-	static const float START_DIMENSION;
-	static const float BASE_MOVE_RATE;
 	static const sf::Color PLAYER0_COLOR;
 	static const sf::Color PLAYER1_COLOR;
 	static const sf::Color PLAYER2_COLOR;
@@ -62,13 +48,6 @@ public:
 
 private:
 
-	// Prototypes
-	void CalculateSpeed(void);
-
-	// Members
-	float m_currentDimension;	
-	float m_moveRate;
-	int m_playerID;
 };
 
 #endif

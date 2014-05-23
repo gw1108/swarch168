@@ -42,29 +42,30 @@ Pellet::Pellet(void)
 //  ===============================================================================================
 void Pellet::Spawn(void)
 {
+	float wallBuffer = 20;
 	float xCoord = 0;
 	float yCoord = 0;
 
-	xCoord = ((rand() % (GameData::BOARD_WIDTH)));	
+	xCoord = (float)((rand() % (int)(GameData::BOARD_WIDTH)));	
 
-	if(xCoord <= 10)
+	if(xCoord <= wallBuffer)
 	{
-		xCoord = 10;
+		xCoord = wallBuffer;
 	}
-	else if(xCoord >= (GameData::BOARD_WIDTH - 10))
+	else if(xCoord >= (GameData::BOARD_WIDTH - wallBuffer))
 	{
-		xCoord = (GameData::BOARD_WIDTH - 10);
+		xCoord = (GameData::BOARD_WIDTH - wallBuffer);
 	}
 
-	yCoord = ((rand() % (GameData::BOARD_HEIGHT)));	
+	yCoord = (float)((rand() % (int)(GameData::BOARD_HEIGHT)));	
 
-	if(yCoord <= 10)
+	if(yCoord <= wallBuffer)
 	{
-		yCoord = 10;
+		yCoord = wallBuffer;
 	}
-	else if(yCoord >= (GameData::BOARD_HEIGHT - 10))
+	else if(yCoord >= (GameData::BOARD_HEIGHT - wallBuffer))
 	{
-		yCoord = (GameData::BOARD_HEIGHT - 10);
+		yCoord = (GameData::BOARD_HEIGHT - wallBuffer);
 	}
 
 	sf::Vector2f position(xCoord, yCoord);

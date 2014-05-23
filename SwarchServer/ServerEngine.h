@@ -16,14 +16,14 @@ public:
 	void run(void);
 	void stop(void);
 private:
-	void CheckPelletCollisions(Player& playerPiece);
-	void CheckWallCollisions(Player& playerPiece);
-	void CheckPlayerCollision(Player& playerPiece);
+	void CheckPelletCollisions(Player& player);
+	void CheckWallCollisions(Player& player);
+	void CheckPlayerCollision(Player& player);
 	void UpdatePlayerDirection(ServerData data);
 	GameData getCurrentGameData(void);
 
 	bool serverIsRunning;
-	std::unordered_map<int, std::pair<Player, GamePiece>> players;
+	std::unordered_map<int, Player> players;
 
 	SNetworkController networkController;
 	//vector of players
