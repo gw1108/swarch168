@@ -101,43 +101,8 @@ void SNetworkController::updateConnections(void)
 			packet >> commandCode;
 			if(commandCode == GameData::LOG_IN)
 			{
-				std::cout << "command code is login" << std::endl;
-				//if(logInHandler.login(username, password))
-				//then mark the client as ready
-				LogInData logInData;
-				GameData::LoginResponse responseCode;
-				packet >> logInData;
-				responseCode = logInHandler->loginUser(logInData.GetUsername(), logInData.GetPassword());
-				std::cout << "response code to log in " << responseCode << std::endl;
-				packet.clear();
-
-				//send back packet
-				sf::Uint8 newCode = GameData::INITIALIZE;
-				sf::Uint8 serverResponseCode = responseCode;
-				sf::Uint8 clientNumber = (sf::Uint8)  getNewClientNumber();
-				packet << newCode;
-				packet << serverResponseCode;
-				packet << clientNumber;		//todo next number
-				cout << "Sending packet new player number is " << (int)clientNumber << endl;
-				std::cout << client.send(packet) << std::endl;
-
-				if(responseCode == GameData::LoginResponse::ACCEPTED)
-				{
-					//Player newPlayer(logInData.GetUsername(), (int)clientNumber);
-					//sendNewPlayer(newPlayer);
-				}
-
-				(*it).second.m_loggedIn = ((responseCode == GameData::LoginResponse::ACCEPTED) ||
-										   (responseCode == GameData::LoginResponse::NEW_ACCOUNT));
-				(*it).second.m_playerNumber = (int) clientNumber;
-				
-				//add new player to game data
-				if((*it).second.m_loggedIn)
-				{
-					ServerData data((*it).second.m_playerNumber, ServerData::LOG_IN);
-					data.m_playerName = logInData.GetUsername();
-					pushServerData(data);
-				}
+				std::cout << "command code is login begin logging in" << std::endl;
+				handleLoginRequest(packet, client, it);
 			}
 			else if(commandCode == GameData::CommandCode::PLAYER_UPDATE)	//update the m_data queue
 			{
@@ -206,7 +171,7 @@ bool SNetworkController::isGameDataAvailible(void)
 }
 
 //sends data to all players
-void SNetworkController::sendGameUpdate(GameData data)
+void SNetworkController::sendGameUpdate(GameData& data)
 {
 	for(auto it = clients.begin(); it != clients.end(); ++it)
 	{
@@ -243,7 +208,7 @@ void SNetworkController::stopNetwork(void)
 
 int SNetworkController::getNewClientNumber()
 {
-	for(int i = 0; i < availableSpots.size(); i++)
+	for(size_t i = 0; i < availableSpots.size(); i++)
 	{
 		if(availableSpots[i])
 		{
@@ -280,5 +245,38 @@ void SNetworkController::sendNewPlayer(Player newPlayer)
 
 			(*it).first->send(packet);
 		}
+	}
+}
+
+void SNetworkController::handleLoginRequest(sf::Packet packet, sf::TcpSocket& client, std::list<std::pair<sf::TcpSocket*, SPlayer>>::iterator& it)
+{
+	//then mark the client as ready
+	LogInData logInData;
+	GameData::LoginResponse responseCode;
+	packet >> logInData;
+	responseCode = logInHandler->loginUser(logInData.GetUsername(), logInData.GetPassword());
+	std::cout << "response code to log in " << responseCode << std::endl;
+	packet.clear();
+
+	//send back packet
+	sf::Uint8 newCode = GameData::INITIALIZE;
+	sf::Uint8 serverResponseCode = responseCode;
+	sf::Uint8 clientNumber = (sf::Uint8)  getNewClientNumber();
+	packet << newCode;
+	packet << serverResponseCode;
+	packet << clientNumber;		//todo next number
+	cout << "Sending packet new player number is " << (int)clientNumber << endl;
+	std::cout << client.send(packet) << std::endl;
+
+	(*it).second.m_loggedIn = ((responseCode == GameData::LoginResponse::ACCEPTED) ||
+								(responseCode == GameData::LoginResponse::NEW_ACCOUNT));
+	(*it).second.m_playerNumber = (int) clientNumber;
+				
+	//add new player to game data
+	if((*it).second.m_loggedIn)
+	{
+		ServerData data((*it).second.m_playerNumber, ServerData::LOG_IN);
+		data.m_playerName = logInData.GetUsername();
+		pushServerData(data);
 	}
 }

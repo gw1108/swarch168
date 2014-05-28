@@ -84,8 +84,12 @@ void ServerEngine::run(void)
 				}
 			}
 
+			//update game data
+			//TODO : make reset work
+			UpdateGameData();
+
 			//send update to players
-			networkController.sendGameUpdate(getCurrentGameData());
+			networkController.sendGameUpdate(m_currentGameData);
 		}
 
 	}
@@ -183,21 +187,18 @@ void ServerEngine::UpdatePlayerDirection(ServerData data)
 	}
 }
 
-GameData ServerEngine::getCurrentGameData(void)
-{
-	GameData currentGameData;
 
+void ServerEngine::UpdateGameData(bool reset)
+{
 	for(auto it = players.begin(); it != players.end(); ++it)
 	{
-		currentGameData.m_players[(*it).first].CopyFrom((*it).second);
+		m_currentGameData.m_players[(*it).first].CopyFrom((*it).second);
 	}
 
 	for(int i = 0; i < GameData::MAX_PELLETS; ++i)
 	{
-		currentGameData.m_pellets[i] = gamePellets[i];
+		m_currentGameData.m_pellets[i] = gamePellets[i];
 	}
 
-	currentGameData.reset = false;
-
-	return currentGameData;
+	m_currentGameData.reset = reset;
 }
