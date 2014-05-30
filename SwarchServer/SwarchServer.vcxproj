@@ -43,7 +43,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\Middleware\include;$(ProjectDir)..\SwarchLibrary;$(ProjectDir)..\Middleware\openssl-1.0.1g-bin\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\Middleware\include;$(ProjectDir)..\SwarchLibrary;$(ProjectDir)..\Middleware\openssl-1.0.1g-bin\include;$(ProjectDir)..\SwarchServer;$(ProjectDir)..\SwarchClient;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SFML_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
     </ClCompile>
@@ -59,7 +59,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\Middleware\include;$(ProjectDir)..\SwarchLibrary;$(ProjectDir)..\Middleware\openssl-1.0.1g-bin\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\Middleware\include;$(ProjectDir)..\SwarchLibrary;$(ProjectDir)..\Middleware\openssl-1.0.1g-bin\include;$(ProjectDir)..\SwarchServer;$(ProjectDir)..\SwarchClient;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SFML_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
