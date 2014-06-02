@@ -20,7 +20,7 @@ private:
 	void CheckWallCollisions(Player& player);
 	void CheckPlayerCollision(Player& player);
 	void UpdatePlayerDirection(ServerData data);
-	GameData getCurrentGameData(void);
+	void UpdateGameData(bool reset = false);
 
 	bool serverIsRunning;
 	std::unordered_map<int, Player> players;
@@ -29,4 +29,6 @@ private:
 	//vector of players
 
 	Pellet* gamePellets;
+	//the current game data that updates and get sent
+	GameData m_currentGameData;
 };
