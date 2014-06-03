@@ -9,6 +9,8 @@
 // ================================================================================================
 
 #include <iostream>
+#include <sstream>
+#include <chrono>
 #include "ClientEngine.h"
 #include "Player.h"
 
@@ -57,62 +59,66 @@ void ClientEngine::Run(void)
 
 	while(m_running)
 	{
-		// Limit Engine to ~60 Cycles a Second
-		if(m_engineClock.getElapsedTime().asMilliseconds() <= GameData::ENGINE_SPEED)
+		m_engineClock.restart();
+
+		if(!m_networkControl.IsConnected())
 		{
-			Render();
-			continue;
+			m_running = false;
+			break;
+		}
+
+		// Check for Data Update
+		if(m_networkControl.GetNextData(m_gameData))
+		{
+			UpdateGamePieces(m_gameData.reset);
 		}
 		else
 		{
-			m_engineClock.restart();
+			PredictOpponents();
+		}
 
-			// Check for Data Update
-			if(m_networkControl.GetNextData(m_gameData))
+		// Loop through events and assign proper values to moveDirection
+		sf::Event event;
+		while(m_mainWindow.pollEvent(event))
+		{
+			if((event.type == sf::Event::Closed) || ((event.type == sf::Event::KeyPressed) && 
+														(event.key.code == sf::Keyboard::Escape)))
 			{
-				UpdateGamePieces(m_gameData.reset);
+				m_running = false;
 			}
-			else
+			else if((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::W))
 			{
-				PredictOpponents();
+				newDirection = Player::UP;
 			}
-
-			// Loop through events and assign proper values to moveDirection
-			sf::Event event;
-			while(m_mainWindow.pollEvent(event))
+			else if((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::S))
 			{
-				if((event.type == sf::Event::Closed) || ((event.type == sf::Event::KeyPressed) && 
-														 (event.key.code == sf::Keyboard::Escape)))
-				{
-					m_running = false;
-				}
-				else if((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::W))
-				{
-					newDirection = Player::UP;
-				}
-				else if((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::S))
-				{
-					newDirection = Player::DOWN;
-				}
-				else if((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::A))
-				{
-					newDirection = Player::LEFT;
-				}
-				else if((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::D))
-				{
-					newDirection = Player::RIGHT;
-				}
-			} 
-
-			if(newDirection != moveDirection)
-			{
-				// Send Move Command
-				m_networkControl.SendDirectionChange(newDirection);
-				moveDirection = newDirection;
+				newDirection = Player::DOWN;
 			}
+			else if((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::A))
+			{
+				newDirection = Player::LEFT;
+			}
+			else if((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::D))
+			{
+				newDirection = Player::RIGHT;
+			}
+		} 
 
-			// Render The Game Screen
-			Render();
+		if(newDirection != moveDirection)
+		{
+			// Send Move Command
+			m_networkControl.SendDirectionChange(newDirection);
+			moveDirection = newDirection;
+		}
+
+		// Render The Game Screen
+		Render();
+
+		// Limit Engine to ~50 Cycles a Second
+		if(m_engineClock.getElapsedTime().asMilliseconds() <= GameData::ENGINE_SPEED)
+		{
+			int sleepTime = GameData::ENGINE_SPEED - m_engineClock.getElapsedTime().asMilliseconds();
+			std::this_thread::sleep_for(std::chrono::milliseconds(sleepTime));
 		}
 	}
 }
@@ -120,7 +126,8 @@ void ClientEngine::Run(void)
 // ===== UpdateGamePieces =========================================================================
 // This method updates the opponents positions. It will interpolate between the currently predicted
 // positions and the updated ones received from the server. This method should be called whenever
-// new data is received from the server.
+// new data is received from the server. The method will also update the score and name text
+// displayed for each player.
 //
 // Input:
 //	[IN]	bool reset	-	if the players need to be interpolated or not
@@ -129,18 +136,15 @@ void ClientEngine::Run(void)
 // ================================================================================================
 void ClientEngine::UpdateGamePieces(bool reset)
 {
-	int index = 0;
-
-	// Remove When interpolation is complete
-	reset = true;
-
-	if(reset)
+	// Update Score Text
+	for(int index = 0; index < GameData::MAX_PLAYERS; index++)
 	{
-		for(index = 0; index < GameData::MAX_PLAYERS; index++)
-		{
-			m_userNames[index].setString( m_gameData.m_players[index].GetUsername());
-		}
+		std::stringstream nameAndScore;
+		nameAndScore << m_gameData.m_players[index].GetScore() << "  " << m_gameData.m_players[index].GetUsername();
+		m_userNames[index].setString(nameAndScore.str());
 	}
+
+
 }
 
 // ===== PredictOpponents =========================================================================

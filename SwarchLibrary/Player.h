@@ -53,6 +53,7 @@ public:
 	float GetMoveRate(void) { return m_moveRate; }
 	float GetDimension(void) { return m_currentDimension; }
 	GamePiece GetPiece(void) { return m_piece; };
+	int GetScore(void) { return m_score; }
 
 	// Setters
 	void SetUsername(std::string username) { m_username = username; }
@@ -64,6 +65,7 @@ public:
 	void SetDead(bool state) { m_dead = state; }
 	void SetMoveRate(float rate) { m_moveRate = rate; }
 	void SetDimension(float dime) { m_currentDimension = dime; }
+	void SetScore(int score) { m_score = score; }
 
 private:
 
@@ -94,6 +96,7 @@ private:
 	// Gameplay Data
 	bool m_active;
 	bool m_dead;
+	int m_score;
 };
 
 // Packet Overloads for LogInData
