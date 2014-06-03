@@ -34,7 +34,8 @@ Player::Player(void) :
 	m_currentDimension(START_DIMENSION),
 	m_piece(m_playerNum, m_position, m_currentDimension),
 	m_active(false),
-	m_dead(false)
+	m_dead(false),
+	m_score(0)
 {}
 
 // ===== Conversion Constructor ===================================================================
@@ -59,7 +60,8 @@ Player::Player(std::string userName, int playerNum, sf::Vector2f position, bool 
 	m_currentDimension(START_DIMENSION),
 	m_piece(m_playerNum, m_position, m_currentDimension),
 	m_active(active),
-	m_dead(false)
+	m_dead(false),
+	m_score(0)
 {}
 
 // ===== CopyFrom =================================================================================
@@ -82,6 +84,7 @@ void Player::CopyFrom(const Player &other)
 	m_piece.Rebuild(m_playerNum, m_position, m_currentDimension);
 	m_active = other.m_active;
 	m_dead = other.m_dead;
+	m_score = other.m_score;
 }
 
 // ===== ReSpawn ==================================================================================
@@ -290,7 +293,8 @@ sf::Packet& operator<<(sf::Packet& packet, Player& data)
 			<< data.IsActive()
 			<< data.IsDead()
 			<< data.GetMoveRate()
-			<< data.GetDimension();
+			<< data.GetDimension()
+			<< data.GetScore();
 
 	return packet;
 }
@@ -317,6 +321,7 @@ sf::Packet& operator>>(sf::Packet& packet, Player& data)
 	bool dead;
 	float moveRate;
 	float dimension;
+	int score;
 
 	packet	>> username 
 			>> playerNum
@@ -326,7 +331,8 @@ sf::Packet& operator>>(sf::Packet& packet, Player& data)
 			>> state
 			>> dead
 			>> moveRate
-			>> dimension;
+			>> dimension
+			>> score;
 
 	data.SetUsername(username);
 	data.SetPlayerNumber(playerNum);
@@ -336,6 +342,7 @@ sf::Packet& operator>>(sf::Packet& packet, Player& data)
 	data.SetDead(dead);
 	data.SetMoveRate(moveRate);
 	data.SetDimension(dimension);
+	data.SetScore(score);
 
 	return packet;
 }

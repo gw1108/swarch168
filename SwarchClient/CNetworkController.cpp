@@ -28,9 +28,7 @@ CNetworkController::CNetworkController(const sf::Clock& gameClock) :
 	m_playerNum(-1),
 	m_responded(false),
 	m_serverResponse(-1)
-{
-	m_serverConnection.setBlocking(false);
-}
+{}
 
 // ===== Destructor ===============================================================================
 // The destructor will ensure all dynamically allocated memory is released.
@@ -57,12 +55,10 @@ bool CNetworkController::Connect(std::string ipAddress, int portNumber)
 {
 	// Attempt to establish connection
 	sf::Time timeOut = sf::seconds(5); // Wait time for server connection
-	sf::Socket::Status rc;
-	m_serverConnection.setBlocking(true);
-	rc = m_serverConnection.connect(ipAddress, portNumber, timeOut);
-	m_serverConnection.setBlocking(false);
+	sf::Socket::Status returnCode;
+	returnCode = m_serverConnection.connect(ipAddress, portNumber, timeOut);
 
-	if(rc == sf::TcpSocket::Done)
+	if(returnCode == sf::TcpSocket::Done)
 	{
 		// Connection established; Start thread
 		m_connected = true;
@@ -86,7 +82,6 @@ bool CNetworkController::Connect(std::string ipAddress, int portNumber)
 // ================================================================================================
 void CNetworkController::Disconnect(void)
 {
-	StopListeningThread();
 	m_serverConnection.disconnect();
 	m_connected = false;
 	m_responded = false;
@@ -163,9 +158,7 @@ void CNetworkController::SocketListening(void)
 		}
 		else if(receiveStatus == sf::TcpSocket::Disconnected)
 		{
-			m_connected = false;
-			m_responded = false;
-			m_serverResponse = (-1);
+			Disconnect();
 		}
 	}
 }
