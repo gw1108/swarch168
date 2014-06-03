@@ -115,6 +115,7 @@ void ServerEngine::CheckPelletCollisions(Player& player)
 		if(player.CollidesWith(gamePellets[pelletIndex]))
 		{
 			player.Grow();
+			player.SetScore(player.GetScore() + 1);
 			gamePellets[pelletIndex].Spawn();
 		}
 	}
@@ -133,6 +134,10 @@ void ServerEngine::CheckWallCollisions(Player& player)
 	{
 		cout << "Player " << player.GetAssignedNumber() << " has foolishly hit a wall and died " << endl;
 		player.ReSpawn();
+		if(player.GetScore() > 0)
+		{
+			player.SetScore(player.GetScore() - 1);
+		}
 	}
 }
 
@@ -156,7 +161,21 @@ void ServerEngine::CheckPlayerCollision(Player& player)
 				Player* smallPiece;
 				Player* largePiece;
 				//they collided eliminate the smaller one
-				if(player.GetDimension() < (*it).second.GetDimension())
+				if(player.GetDimension() == (*it).second.GetDimension()
+					 && player.GetScore() != (*it).second.GetScore())
+				{
+					if(player.GetScore() > (*it).second.GetScore())
+					{
+						largePiece = &player;
+						smallPiece = &(*it).second;
+					}
+					else
+					{
+						largePiece = &player;
+						smallPiece = &(*it).second;
+					}
+				}
+				else if(player.GetDimension() < (*it).second.GetDimension())
 				{
 					smallPiece = &player;
 					largePiece = &((*it).second);
@@ -168,6 +187,8 @@ void ServerEngine::CheckPlayerCollision(Player& player)
 				}
 				largePiece->Grow(smallPiece->GetDimension());
 				smallPiece->ReSpawn();
+				largePiece->SetScore(largePiece->GetScore()+smallPiece->GetScore() + 2);
+				smallPiece->SetScore(smallPiece->GetScore() / 2);
 			}
 		}
 	}
