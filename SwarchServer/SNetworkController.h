@@ -19,7 +19,7 @@ public:
 	void stopNetwork(void);
 	ServerData getNextGameData(void);
 	bool isGameDataAvailible(void);
-	void sendGameUpdate(GameData data);
+	void sendGameUpdate(GameData& data);
 
 private:
 	void run(void);
@@ -29,6 +29,7 @@ private:
 	void freeClientNumber(int clientNumber);
 	void pushServerData(ServerData data);
 	void sendNewPlayer(Player newPlayer);
+	void handleLoginRequest(sf::Packet packet, sf::TcpSocket& client, std::list<std::pair<sf::TcpSocket*, SPlayer>>::iterator& it);
 
 	LogIn* logInHandler;
 	std::thread* m_networkThread;
