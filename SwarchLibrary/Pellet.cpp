@@ -86,8 +86,8 @@ void Pellet::Spawn(void)
 // ================================================================================================
 sf::Packet& operator<<(sf::Packet& packet, Pellet& data)
 {
-	packet	<< data.getGlobalBounds().left
-			<< data.getGlobalBounds().top;
+	packet	<< data.getPosition().x
+		<< data.getPosition().y;
 
 	return packet;
 }

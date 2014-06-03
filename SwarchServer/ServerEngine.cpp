@@ -32,66 +32,65 @@ void ServerEngine::run(void)
 	cout << "starting to run" << endl;
 	serverIsRunning = true;
 	networkController.startNetwork();
-	sf::Clock engineClock;
+	sf::Clock engineClock = sf::Clock();
 
 	while(serverIsRunning)
 	{
-		if(engineClock.getElapsedTime().asMilliseconds() <= GameData::ENGINE_SPEED)
+		//update player directions
+		while(networkController.isGameDataAvailible())
 		{
-			continue;
-		}
-		else
-		{
-			engineClock.restart();
-			//update player directions
-			while(networkController.isGameDataAvailible())
+			ServerData data = networkController.getNextGameData();
+			if(data.m_command == ServerData::ServerCommands::PLAYER_UPDATE)
 			{
-				ServerData data = networkController.getNextGameData();
-				if(data.m_command == ServerData::ServerCommands::PLAYER_UPDATE)
-				{
-					UpdatePlayerDirection(data);
-					cout << "Recieved update from player " << data.m_playerNumber << endl;
-				}
-				else if(data.m_command == ServerData::ServerCommands::LOG_IN)
-				{
-					Player player;
-					player.ReSpawn();
-					player.SetUsername(data.m_playerName);
-					player.SetActive(true);
-					player.SetPlayerNumber(data.m_playerNumber);
-					players.at(data.m_playerNumber) = player;
-					cout << "Player " << data.m_playerNumber << " logged in to engine" << endl;
-				}
-				else if(data.m_command == ServerData::ServerCommands::LOG_OUT)
-				{
-					players.at(data.m_playerNumber).SetActive(false);
-				}
+				UpdatePlayerDirection(data);
+				cout << "Recieved update from player " << data.m_playerNumber << endl;
 			}
-
-			//update people
-			for(auto it = players.begin(); it != players.end(); ++it)
+			else if(data.m_command == ServerData::ServerCommands::LOG_IN)
 			{
-				if((*it).second.IsActive())
-				{
-					(*it).second.TakeTurn();
-
-					//check for collision against pellets and walls
-					CheckPelletCollisions((*it).second);
-
-					CheckWallCollisions((*it).second);
-
-					CheckPlayerCollision((*it).second);
-				}
+				Player player;
+				player.ReSpawn();
+				player.SetUsername(data.m_playerName);
+				player.SetActive(true);
+				player.SetPlayerNumber(data.m_playerNumber);
+				players.at(data.m_playerNumber) = player;
+				cout << "Player " << data.m_playerNumber << " logged in to engine" << endl;
 			}
-
-			//update game data
-			//TODO : make reset work
-			UpdateGameData();
-
-			//send update to players
-			networkController.sendGameUpdate(m_currentGameData);
+			else if(data.m_command == ServerData::ServerCommands::LOG_OUT)
+			{
+				players.at(data.m_playerNumber).SetActive(false);
+			}
 		}
 
+		//update people
+		for(auto it = players.begin(); it != players.end(); ++it)
+		{
+			if((*it).second.IsActive())
+			{
+				(*it).second.TakeTurn();
+
+				//check for collision against pellets and walls
+				CheckPelletCollisions((*it).second);
+
+				CheckWallCollisions((*it).second);
+
+				CheckPlayerCollision((*it).second);
+			}
+		}
+
+		//update game data
+		//TODO : make reset work
+		UpdateGameData();
+
+		//send update to players
+		networkController.sendGameUpdate(m_currentGameData);
+
+		int sleepTime = GameData::ENGINE_SPEED - engineClock.getElapsedTime().asMilliseconds();
+		if(sleepTime < 0)
+		{
+			sleepTime = 0;
+		}
+		std::this_thread::sleep_for(std::chrono::milliseconds(sleepTime));
+		engineClock.restart();
 	}
 	networkController.stopNetwork();
 	cout << "finished running" << endl;

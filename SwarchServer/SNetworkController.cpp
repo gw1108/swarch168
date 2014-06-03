@@ -44,6 +44,8 @@ void SNetworkController::run(void)
 
 	sf::TcpSocket* player = new sf::TcpSocket();
 	player->setBlocking(false);
+
+	sf::Clock networkClock = sf::Clock();
 	while(serverRunning)
 	{
 		//accept new connections
@@ -52,7 +54,13 @@ void SNetworkController::run(void)
 		//update old connections
 		updateConnections();
 
-		std::this_thread::sleep_for(std::chrono::milliseconds(GameData::S_UPDATE_SPEED));
+		int sleepTime = GameData::S_UPDATE_SPEED - networkClock.getElapsedTime().asMilliseconds();
+		if(sleepTime < 0)
+		{
+			sleepTime = 0;
+		}
+		networkClock.restart();
+		std::this_thread::sleep_for(std::chrono::milliseconds(sleepTime));
 	}
 	delete player;
 	std::cout << "stopped waiting for connections" << std::endl;
