@@ -57,6 +57,11 @@ void ClientEngine::Run(void)
 
 	while(m_running)
 	{
+		if(!m_networkControl.IsConnected())
+		{
+			m_running = false;
+		}
+
 		// Limit Engine to ~60 Cycles a Second
 		if(m_engineClock.getElapsedTime().asMilliseconds() <= GameData::ENGINE_SPEED)
 		{
